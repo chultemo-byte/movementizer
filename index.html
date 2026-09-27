@@ -7,11 +7,40 @@
   <meta name="description" content="Register all active movements on Earth. Each movement its own window. Real-time real video. Living history for the children." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div id="app"></div>
+  <header class="mast">
+    <p class="mark">movementizer.com</p>
+    <h1>Legends of Earth</h1>
+    <p class="law">Register all active movements. Each movement its own window. Only real-time real video. Free of everything. When the street stills, the same window becomes beautiful memory and history.</p>
+  </header>
+
+  <section class="band live" id="live">
+    <h2>LIVE</h2>
+    <p class="when">In the street now</p>
+    <div class="grid" data-band="live"></div>
+  </section>
+
+  <section class="band still" id="still">
+    <h2>STILL ON</h2>
+    <p class="when">Started. Not finished. Square may be empty today.</p>
+    <div class="grid" data-band="still"></div>
+  </section>
+
+  <section class="band fulfilled" id="fulfilled">
+    <h2>FULFILLED</h2>
+    <p class="when">That claim met a change. The window stays.</p>
+    <div class="grid" data-band="fulfilled"></div>
+  </section>
+
+  <footer>
+    <p>Without time and space we are one. Only time and space has power for change.</p>
+    <p>Future generations are you and your children’s children.</p>
+  </footer>
+
+  <div id="window" class="overlay hidden" role="dialog" aria-modal="true"></div>
   <script src="app.js"></script>
 </body>
 </html>
