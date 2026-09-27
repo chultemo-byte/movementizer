@@ -1,0 +1,51 @@
+:root {
+  --ink: #1a1612;
+  --paper: #f4efe6;
+  --live: #c23b22;
+  --still: #6b5a3e;
+  --done: #2f4a3a;
+  --line: rgba(26,22,18,.14);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--paper); color: var(--ink); }
+body {
+  font-family: Outfit, system-ui, sans-serif;
+  min-height: 100vh;
+}
+h1, h2, .serif { font-family: "Cormorant Garamond", Georgia, serif; }
+a { color: inherit; text-decoration: none; }
+.wrap { max-width: 920px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+header { margin-bottom: 2.5rem; }
+header h1 { font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 400; margin: 0; letter-spacing: -.02em; }
+header p { max-width: 38rem; line-height: 1.55; font-weight: 300; }
+.band { margin: 2.2rem 0; }
+.band h2 {
+  font-size: .78rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  font-family: Outfit, sans-serif;
+  font-weight: 500;
+  margin: 0 0 .8rem;
+}
+.band.live h2 { color: var(--live); }
+.band.still h2 { color: var(--still); }
+.band.done h2 { color: var(--done); }
+.list { display: grid; gap: .6rem; }
+.window {
+  display: block;
+  border: 1px solid var(--line);
+  padding: 1rem 1.1rem;
+  background: #fffdf8;
+}
+.window:hover { border-color: var(--ink); }
+.window .name { font-family: "Cormorant Garamond", Georgia, serif; font-size: 1.35rem; }
+.window .meta { font-size: .86rem; opacity: .7; margin-top: .2rem; }
+footer { margin-top: 3rem; font-size: .9rem; opacity: .7; }
+.actions { display: flex; gap: .6rem; margin-top: 1rem; }
+button, .btn {
+  font: inherit;
+  border: 1px solid var(--ink);
+  background: transparent;
+  padding: .55rem .9rem;
+  cursor: pointer;
+}
