@@ -55,6 +55,69 @@ h1, h2, strong { font-family: "Cormorant Garamond", Georgia, serif; font-weight:
   letter-spacing: -.02em;
 }
 .band-head p { margin: .2rem 0 1rem; color: var(--muted); }
+.radar {
+  margin: 1.6rem 0 0;
+  padding: 1.1rem 1rem 1.15rem;
+  border: 1px solid var(--line);
+  background: #f7f2ea;
+}
+.scope {
+  display: grid;
+  gap: 1rem;
+}
+@media (min-width: 720px) {
+  .scope { grid-template-columns: 180px 1fr; align-items: center; }
+}
+.dish {
+  width: 160px;
+  height: 160px;
+  margin: 0 auto;
+  border-radius: 50%;
+  position: relative;
+  background:
+    repeating-radial-gradient(circle at 50% 50%, transparent 0 18px, rgba(20,19,17,.08) 18px 19px),
+    radial-gradient(circle at 50% 50%, #efe8dc, #e4ddd2);
+  overflow: hidden;
+}
+.dish::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(from 0deg, transparent 0 8%, rgba(180,35,24,.22) 12%, transparent 18%);
+  animation: sweep 4.8s linear infinite;
+}
+@keyframes sweep { to { transform: rotate(360deg); } }
+.blip {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--live);
+  box-shadow: 0 0 0 6px rgba(180,35,24,.16);
+}
+.blip.b1 { top: 28%; left: 62%; }
+.blip.b2 { top: 48%; left: 30%; background: var(--still); box-shadow: 0 0 0 6px rgba(106,84,44,.16); }
+.blip.b3 { top: 68%; left: 55%; background: var(--still); box-shadow: 0 0 0 6px rgba(106,84,44,.16); }
+.blip.b4 { top: 36%; left: 40%; background: var(--done); box-shadow: 0 0 0 6px rgba(33,84,61,.16); }
+.pings { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; }
+.pings button {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: var(--card);
+  border: 1px solid var(--line);
+  padding: .55rem .7rem;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 1.2rem 1fr auto;
+  gap: .45rem;
+  align-items: baseline;
+}
+.pings button:hover { border-color: var(--ink); }
+.pings .n { font-size: .72rem; opacity: .55; }
+.pings strong { font-size: 1.05rem; }
+.pings .scale { font-size: .78rem; color: var(--muted); }
 .grid { display: grid; gap: .65rem; }
 @media (min-width: 720px) {
   .grid { grid-template-columns: 1fr 1fr; }

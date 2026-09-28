@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Movementizer — legends of Earth</title>
-  <meta name="description" content="A living registry of movements on Earth. One window each. Real video. Then memory." />
+  <title>Movementizer — Earth radar</title>
+  <meta name="description" content="The Earth radar for movements. One window each. Real video. Then memory." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -14,37 +14,31 @@
   <header class="mast">
     <div class="row">
       <p class="mark">Movementizer</p>
-      <p class="status"><span class="dot" aria-hidden="true"></span> Registry live</p>
+      <p class="status"><span class="dot" aria-hidden="true"></span> Radar live</p>
     </div>
-    <h1>Legends of Earth</h1>
-    <p class="law">Each movement is registered in its own window. Only real video. When the street stills, the same window becomes history the children can open. Floor: ten thousand people.</p>
+    <h1>Earth radar</h1>
+    <p class="law">The biggest movement radar on the planet: register every movement in its own window. Scale as last seen. We do not award victory. Only real video.</p>
   </header>
 
-  <section class="radar" id="radar" aria-label="Earth movement radar">
+  <section class="radar" id="radar">
     <div class="band-head">
-      <h2>Radar</h2>
-      <p>Biggest pulses we can stand behind. We do not award victory. Scale is last seen, not a score.</p>
+      <h2>Biggest pulses</h2>
+      <p>Ranked by last known scale. The square may be empty today. The ping stays.</p>
     </div>
-    <div class="radar-box">
-      <div class="scope" aria-hidden="true">
-        <span class="ring"></span>
-        <span class="ring"></span>
-        <span class="ring"></span>
-        <span class="sweep"></span>
+    <div class="scope">
+      <div class="dish" aria-hidden="true">
         <span class="blip b1"></span>
         <span class="blip b2"></span>
         <span class="blip b3"></span>
         <span class="blip b4"></span>
-        <span class="blip b5"></span>
-        <span class="blip b6"></span>
       </div>
       <ol class="pings">
-        <li><button type="button" class="card ping" data-slug="nokings" data-place="United States" data-claim="Last mass day 8 million. Next mass day ahead."><b>No Kings</b><span>United States · 8 million last mass day</span></button></li>
-        <li><button type="button" class="card ping" data-slug="georgia" data-place="Tbilisi" data-claim="Prisoners, laws, European course. 669 days."><b>Georgia pro-Europe</b><span>Tbilisi · 669 days still on</span></button></li>
-        <li><button type="button" class="card ping" data-slug="flamingo" data-place="Albania / Tirana" data-claim="Land, coast, flamingos, corruption."><b>Flamingo Revolution</b><span>Tirana · 120 days · peak 150–250k</span></button></li>
-        <li><button type="button" class="card ping" data-slug="serbia" data-place="Novi Sad / Belgrade" data-claim="After the station collapse."><b>Serbian student movement</b><span>Novi Sad / Belgrade · largest since 2000</span></button></li>
-        <li><button type="button" class="card ping" data-slug="venezuela-machado" data-place="Caracas / Valencia / Maracaibo / Mérida" data-claim="Return of María Corina Machado. Free elections."><b>Venezuela — Machado return</b><span>Streets 28 Sep · count not locked</span></button></li>
-        <li><button type="button" class="card ping" data-slug="savesoil" data-place="Earth" data-claim="Living soil for the children."><b>Save Soil</b><span>Earth · living soil for the children</span></button></li>
+        <li><button type="button" class="card" data-slug="nokings" data-place="United States" data-claim="Last mass day 8 million. Alive between mass days."><span class="n">1</span><strong>No Kings</strong><span class="scale">~8 million peak</span></button></li>
+        <li><button type="button" class="card" data-slug="savesoil" data-place="Earth" data-claim="Living soil for the children."><span class="n">2</span><strong>Save Soil</strong><span class="scale">Earth</span></button></li>
+        <li><button type="button" class="card" data-slug="india-farmers" data-place="Delhi borders" data-claim="Three farm laws repealed."><span class="n">3</span><strong>India farmers</strong><span class="scale">Fulfilled · hundreds of thousands</span></button></li>
+        <li><button type="button" class="card" data-slug="maricarmen" data-place="Madrid" data-claim="Housing. No more evictions."><span class="n">4</span><strong>Ni una Maricarmen más</strong><span class="scale">25k–200k + camp</span></button></li>
+        <li><button type="button" class="card" data-slug="flamingo" data-place="Albania / Tirana" data-claim="Land, coast, flamingos, corruption."><span class="n">5</span><strong>Flamingo Revolution</strong><span class="scale">100k–200k peak</span></button></li>
+        <li><button type="button" class="card" data-slug="georgia" data-place="Tbilisi" data-claim="Prisoners, laws, European course. 669 days."><span class="n">6</span><strong>Georgia pro-Europe</strong><span class="scale">669 days</span></button></li>
       </ol>
     </div>
   </section>
@@ -52,20 +46,20 @@
   <section class="band live" id="live">
     <div class="band-head">
       <h2>Live</h2>
-      <p>In the street now. Ten thousand or more.</p>
+      <p>In the street now.</p>
     </div>
     <div class="grid">
-      <button type="button" class="card" data-slug="venezuela-machado" data-place="Caracas / Valencia / Maracaibo / Mérida" data-claim="Return of María Corina Machado. Free elections. Democratic transition.">
+      <button type="button" class="card" data-slug="maricarmen" data-place="Madrid" data-claim="Housing. No more evictions. Camp at Puerta del Sol.">
+        <span class="chip live">Live</span>
+        <strong>Ni una Maricarmen más</strong>
+        <span class="place">Madrid · Puerta del Sol</span>
+        <span class="claim">Housing. No more evictions. Camp still on.</span>
+      </button>
+      <button type="button" class="card" data-slug="venezuela-machado" data-place="Caracas / Valencia / Maracaibo / Mérida" data-claim="Return of María Corina Machado. Free elections.">
         <span class="chip live">Live</span>
         <strong>Venezuela — Machado return</strong>
         <span class="place">Caracas / Valencia / Maracaibo / Mérida</span>
-        <span class="claim">Return of María Corina Machado. Free elections. Democratic transition.</span>
-      </button>
-      <button type="button" class="card" data-slug="maricarmen" data-place="Madrid" data-claim="Housing. No more evictions.">
-        <span class="chip live">Live</span>
-        <strong>Ni una Maricarmen más</strong>
-        <span class="place">Madrid</span>
-        <span class="claim">Housing. No more evictions. Thousands on 27 Sep.</span>
+        <span class="claim">Return of María Corina Machado. Free elections.</span>
       </button>
     </div>
   </section>
@@ -76,23 +70,11 @@
       <p>Started. Not finished. The square may be empty today.</p>
     </div>
     <div class="grid">
-      <button type="button" class="card" data-slug="serbia" data-place="Novi Sad / Belgrade" data-claim="After the station collapse. Largest since 2000.">
-        <span class="chip still">Still on</span>
-        <strong>Serbian student movement</strong>
-        <span class="place">Novi Sad / Belgrade</span>
-        <span class="claim">After the station collapse. Largest since 2000.</span>
-      </button>
-      <button type="button" class="card" data-slug="georgia" data-place="Tbilisi" data-claim="Prisoners, laws, European course. 669 days.">
-        <span class="chip still">Still on</span>
-        <strong>Georgia pro-Europe</strong>
-        <span class="place">Tbilisi</span>
-        <span class="claim">Prisoners, laws, European course. 669 days.</span>
-      </button>
       <button type="button" class="card" data-slug="nokings" data-place="United States" data-claim="Last mass day 8 million. Next mass day ahead.">
         <span class="chip still">Still on</span>
         <strong>No Kings</strong>
         <span class="place">United States</span>
-        <span class="claim">Last mass day 8 million. Next mass day ahead.</span>
+        <span class="claim">Last mass day 8 million. Alive between mass days.</span>
       </button>
       <button type="button" class="card" data-slug="savesoil" data-place="Earth" data-claim="Living soil for the children.">
         <span class="chip still">Still on</span>
@@ -105,6 +87,18 @@
         <strong>Flamingo Revolution</strong>
         <span class="place">Albania / Tirana</span>
         <span class="claim">Land, coast, flamingos, corruption.</span>
+      </button>
+      <button type="button" class="card" data-slug="georgia" data-place="Tbilisi" data-claim="Prisoners, laws, European course. 669 days.">
+        <span class="chip still">Still on</span>
+        <strong>Georgia pro-Europe</strong>
+        <span class="place">Tbilisi</span>
+        <span class="claim">Prisoners, laws, European course. 669 days.</span>
+      </button>
+      <button type="button" class="card" data-slug="serbia" data-place="Novi Sad / Belgrade" data-claim="After the station collapse.">
+        <span class="chip still">Still on</span>
+        <strong>Serbian student movement</strong>
+        <span class="place">Novi Sad / Belgrade</span>
+        <span class="claim">After the station collapse.</span>
       </button>
     </div>
   </section>
@@ -155,7 +149,7 @@
   </section>
 
   <footer>
-    <p>Record and upload stay in the movement’s window. Related memory goes to Internet Archive and Filecoin.</p>
+    <p>Radar registers scale as last seen. Record and upload stay in the window. Memory goes to Internet Archive and Filecoin.</p>
     <p>Without time and space we are one. Only time and space has power for change.</p>
   </footer>
 
