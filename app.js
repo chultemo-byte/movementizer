@@ -1,7 +1,7 @@
 const legends = {
   live: [
-    { slug: "maricarmen", name: "Ni una Maricarmen más", place: "Madrid", claim: "Housing. No more evictions." },
-    { slug: "georgia", name: "Georgia pro-Europe", place: "Tbilisi", claim: "Prisoners, laws, European course." }
+    { slug: "georgia", name: "Georgia pro-Europe", place: "Tbilisi", claim: "Prisoners, laws, European course." },
+    { slug: "maricarmen", name: "Ni una Maricarmen más", place: "Madrid", claim: "Housing. No more evictions." }
   ],
   still: [
     { slug: "26septembre", name: "Mouvement du 26 septembre", place: "France", claim: "Climate, life, peace, social justice." },
@@ -22,69 +22,52 @@ const legends = {
 };
 
 const all = [...legends.live, ...legends.still, ...legends.fulfilled];
+const overlay = document.getElementById("window");
 
 function card(m) {
-  return `<button type="button" class="card" data-slug="${m.slug}">
-    <p class="place">${m.place}</p>
-    <h3>${m.name}</h3>
-    <p class="claim">${m.claim}</p>
-  </button>`;
+  const el = document.createElement("button");
+  el.type = "button";
+  el.className = "window";
+  el.innerHTML = `<div class="name">${m.name}</div><div class="meta">${m.place} — ${m.claim}</div>`;
+  el.addEventListener("click", () => openWindow(m));
+  return el;
 }
 
-function fill(band, items) {
-  const root = document.querySelector(`[data-band="${band}"]`);
-  if (!root) return;
-  root.innerHTML = items.map(card).join("");
+function fill() {
+  document.querySelectorAll("[data-band]").forEach((grid) => {
+    grid.innerHTML = "";
+    (legends[grid.dataset.band] || []).forEach((m) => grid.appendChild(card(m)));
+  });
 }
 
 function openWindow(m) {
-  const box = document.getElementById("window");
-  if (!box) return;
-  box.classList.remove("hidden");
-  box.innerHTML = `
-    <div class="window">
-      <p class="place">${m.place}</p>
-      <h2>${m.name}</h2>
-      <p>${m.claim}</p>
-      <p>This window is for real video only. When the street stills, the same window stays as memory.</p>
+  if (!overlay) return;
+  overlay.classList.remove("hidden");
+  overlay.innerHTML = `
+    <div class="sheet">
+      <button type="button" class="close" id="close-window">← legends</button>
+      <h1>${m.name}</h1>
+      <p class="meta">${m.place}. ${m.claim}</p>
+      <p>This window is registered. Real video only. When the street stills, this same window becomes memory.</p>
       <div class="actions">
         <button type="button" id="record">Record video</button>
         <button type="button" id="upload">Upload video</button>
-        <button type="button" class="ghost" id="close">Close</button>
       </div>
-      <p class="note" id="note">Related files will go to Internet Archive and Filecoin.</p>
     </div>`;
+  overlay.querySelector("#close-window").onclick = closeWindow;
+  overlay.querySelector("#record").onclick = () => alert("Record will open the camera in this window.");
+  overlay.querySelector("#upload").onclick = () => alert("Upload will put real video into this window.");
   history.replaceState(null, "", "?w=" + m.slug);
-  document.getElementById("close").onclick = closeWindow;
-  document.getElementById("record").onclick = function () {
-    document.getElementById("note").textContent = "Record opens the camera in this window next.";
-  };
-  document.getElementById("upload").onclick = function () {
-    document.getElementById("note").textContent = "Upload puts real ground video into this window next.";
-  };
 }
 
 function closeWindow() {
-  const box = document.getElementById("window");
-  box.classList.add("hidden");
-  box.innerHTML = "";
+  if (!overlay) return;
+  overlay.classList.add("hidden");
+  overlay.innerHTML = "";
   history.replaceState(null, "", "./");
 }
 
-fill("live", legends.live);
-fill("still", legends.still);
-fill("fulfilled", legends.fulfilled);
-
-document.addEventListener("click", function (e) {
-  const btn = e.target.closest(".card");
-  if (!btn) return;
-  const m = all.find((x) => x.slug === btn.dataset.slug);
-  if (m) openWindow(m);
-});
-
-document.getElementById("window").addEventListener("click", function (e) {
-  if (e.target.id === "window") closeWindow();
-});
+fill();
 
 const start = new URLSearchParams(location.search).get("w");
 const found = all.find((m) => m.slug === start);
