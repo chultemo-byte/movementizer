@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Movementizer — legends of Earth</title>
-  <meta name="description" content="Register all active movements on Earth. Each movement its own window. Only real-time real video. Living history for the children." />
+  <meta name="description" content="A living registry of movements on Earth. One window each. Real video. Then memory." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -12,114 +12,128 @@
 </head>
 <body>
   <header class="mast">
-    <p class="mark">movementizer.com</p>
+    <div class="row">
+      <p class="mark">Movementizer</p>
+      <p class="status"><span class="dot" aria-hidden="true"></span> Registry live</p>
+    </div>
     <h1>Legends of Earth</h1>
-    <p class="law">A public registry of movements. Each movement has one window. Only real video. Free of everything. When the street stills, the same window becomes memory.</p>
-    <p class="trust">14 registered &middot; Real ground video &middot; Archive + Filecoin</p>
+    <p class="law">Each movement is registered in its own window. Only real video. When the street stills, the same window becomes history the children can open.</p>
   </header>
 
   <section class="band live" id="live">
     <div class="band-head">
-      <h2><span class="pulse" aria-hidden="true"></span> LIVE</h2>
-      <p class="when">In the street now</p>
+      <h2>Live</h2>
+      <p>In the street now</p>
     </div>
     <div class="grid">
-      <button type="button" class="card" data-slug="maricarmen" data-place="Madrid" data-name="Ni una Maricarmen más" data-claim="Housing. No more evictions.">
-        <span class="state live-state">Live</span>
-        <p class="place">Madrid</p>
-        <h3>Ni una Maricarmen más</h3>
-        <p class="claim">Housing. No more evictions.</p>
+      <button type="button" class="card" data-slug="georgia" data-place="Tbilisi" data-claim="Prisoners, laws, European course.">
+        <span class="chip live">Live</span>
+        <strong>Georgia pro-Europe</strong>
+        <span class="place">Tbilisi</span>
+        <span class="claim">Prisoners, laws, European course.</span>
       </button>
-      <button type="button" class="card" data-slug="georgia" data-place="Tbilisi" data-name="Georgia pro-Europe" data-claim="Prisoners, laws, European course.">
-        <span class="state live-state">Live</span>
-        <p class="place">Tbilisi</p>
-        <h3>Georgia pro-Europe</h3>
-        <p class="claim">Prisoners, laws, European course.</p>
+      <button type="button" class="card" data-slug="maricarmen" data-place="Madrid" data-claim="Housing. No more evictions.">
+        <span class="chip live">Live</span>
+        <strong>Ni una Maricarmen más</strong>
+        <span class="place">Madrid</span>
+        <span class="claim">Housing. No more evictions.</span>
       </button>
     </div>
   </section>
 
   <section class="band still" id="still">
     <div class="band-head">
-      <h2>STILL ON</h2>
-      <p class="when">Started. Not finished. Square may be empty today.</p>
+      <h2>Still on</h2>
+      <p>Started. Not finished. The square may be empty today.</p>
     </div>
     <div class="grid">
-      <button type="button" class="card" data-slug="26septembre" data-place="France" data-name="Mouvement du 26 septembre" data-claim="Climate, life, peace, social justice.">
-        <p class="place">France</p>
-        <h3>Mouvement du 26 septembre</h3>
-        <p class="claim">Climate, life, peace, social justice.</p>
+      <button type="button" class="card" data-slug="26septembre" data-place="France" data-claim="Climate, life, peace, social justice.">
+        <span class="chip still">Still on</span>
+        <strong>Mouvement du 26 septembre</strong>
+        <span class="place">France</span>
+        <span class="claim">Climate, life, peace, social justice.</span>
       </button>
-      <button type="button" class="card" data-slug="flamingo" data-place="Albania / Tirana" data-name="Flamingo Revolution" data-claim="Land, coast, flamingos, corruption.">
-        <p class="place">Albania / Tirana</p>
-        <h3>Flamingo Revolution</h3>
-        <p class="claim">Land, coast, flamingos, corruption.</p>
+      <button type="button" class="card" data-slug="flamingo" data-place="Albania / Tirana" data-claim="Land, coast, flamingos, corruption.">
+        <span class="chip still">Still on</span>
+        <strong>Flamingo Revolution</strong>
+        <span class="place">Albania / Tirana</span>
+        <span class="claim">Land, coast, flamingos, corruption.</span>
       </button>
-      <button type="button" class="card" data-slug="serbia" data-place="Novi Sad / Belgrade" data-name="Serbian student movement" data-claim="After the station collapse.">
-        <p class="place">Novi Sad / Belgrade</p>
-        <h3>Serbian student movement</h3>
-        <p class="claim">After the station collapse.</p>
+      <button type="button" class="card" data-slug="serbia" data-place="Novi Sad / Belgrade" data-claim="After the station collapse.">
+        <span class="chip still">Still on</span>
+        <strong>Serbian student movement</strong>
+        <span class="place">Novi Sad / Belgrade</span>
+        <span class="claim">After the station collapse.</span>
       </button>
-      <button type="button" class="card" data-slug="nokings" data-place="United States" data-name="No Kings" data-claim="Alive between mass days.">
-        <p class="place">United States</p>
-        <h3>No Kings</h3>
-        <p class="claim">Alive between mass days.</p>
+      <button type="button" class="card" data-slug="nokings" data-place="United States" data-claim="Alive between mass days.">
+        <span class="chip still">Still on</span>
+        <strong>No Kings</strong>
+        <span class="place">United States</span>
+        <span class="claim">Alive between mass days.</span>
       </button>
-      <button type="button" class="card" data-slug="50c" data-place="Switzerland" data-name="No 50°C summers" data-claim="Climate after the record-hot summer.">
-        <p class="place">Switzerland</p>
-        <h3>No 50°C summers</h3>
-        <p class="claim">Climate after the record-hot summer.</p>
+      <button type="button" class="card" data-slug="50c" data-place="Switzerland" data-claim="Climate after the record-hot summer.">
+        <span class="chip still">Still on</span>
+        <strong>No 50°C summers</strong>
+        <span class="place">Switzerland</span>
+        <span class="claim">Climate after the record-hot summer.</span>
       </button>
-      <button type="button" class="card" data-slug="savesoil" data-place="Earth" data-name="Save Soil" data-claim="Living soil for the children.">
-        <p class="place">Earth</p>
-        <h3>Save Soil</h3>
-        <p class="claim">Living soil for the children.</p>
+      <button type="button" class="card" data-slug="savesoil" data-place="Earth" data-claim="Living soil for the children.">
+        <span class="chip still">Still on</span>
+        <strong>Save Soil</strong>
+        <span class="place">Earth</span>
+        <span class="claim">Living soil for the children.</span>
       </button>
     </div>
   </section>
 
   <section class="band fulfilled" id="fulfilled">
     <div class="band-head">
-      <h2>FULFILLED</h2>
-      <p class="when">That claim met a change. The window stays.</p>
+      <h2>Fulfilled</h2>
+      <p>That claim met a change. The window stays.</p>
     </div>
     <div class="grid">
-      <button type="button" class="card" data-slug="india-farmers" data-place="Delhi borders" data-name="India farmers" data-claim="Three farm laws repealed.">
-        <p class="place">Delhi borders</p>
-        <h3>India farmers</h3>
-        <p class="claim">Three farm laws repealed.</p>
+      <button type="button" class="card" data-slug="india-farmers" data-place="Delhi borders" data-claim="Three farm laws repealed.">
+        <span class="chip done">Fulfilled</span>
+        <strong>India farmers</strong>
+        <span class="place">Delhi borders</span>
+        <span class="claim">Three farm laws repealed.</span>
       </button>
-      <button type="button" class="card" data-slug="kenya-finance" data-place="Nairobi" data-name="Kenya Finance Bill" data-claim="2024 finance bill withdrawn.">
-        <p class="place">Nairobi</p>
-        <h3>Kenya Finance Bill</h3>
-        <p class="claim">2024 finance bill withdrawn.</p>
+      <button type="button" class="card" data-slug="kenya-finance" data-place="Nairobi" data-claim="2024 finance bill withdrawn.">
+        <span class="chip done">Fulfilled</span>
+        <strong>Kenya Finance Bill</strong>
+        <span class="place">Nairobi</span>
+        <span class="claim">2024 finance bill withdrawn.</span>
       </button>
-      <button type="button" class="card" data-slug="bangladesh" data-place="Dhaka" data-name="Bangladesh July Revolution" data-claim="The uprising as a street stills.">
-        <p class="place">Dhaka</p>
-        <h3>Bangladesh July Revolution</h3>
-        <p class="claim">The uprising as a street stills.</p>
+      <button type="button" class="card" data-slug="bangladesh" data-place="Dhaka" data-claim="The uprising as a street stills.">
+        <span class="chip done">Fulfilled</span>
+        <strong>Bangladesh July Revolution</strong>
+        <span class="place">Dhaka</span>
+        <span class="claim">The uprising as a street stills.</span>
       </button>
-      <button type="button" class="card" data-slug="nepal-genz" data-place="Kathmandu" data-name="Nepal Gen Z" data-claim="Ban off. Government out. New vote.">
-        <p class="place">Kathmandu</p>
-        <h3>Nepal Gen Z</h3>
-        <p class="claim">Ban off. Government out. New vote.</p>
+      <button type="button" class="card" data-slug="nepal-genz" data-place="Kathmandu" data-claim="Ban off. Government out. New vote.">
+        <span class="chip done">Fulfilled</span>
+        <strong>Nepal Gen Z</strong>
+        <span class="place">Kathmandu</span>
+        <span class="claim">Ban off. Government out. New vote.</span>
       </button>
-      <button type="button" class="card" data-slug="korea" data-place="Seoul" data-name="South Korea anti-martial-law" data-claim="Yoon removed. That campaign stills.">
-        <p class="place">Seoul</p>
-        <h3>South Korea anti-martial-law</h3>
-        <p class="claim">Yoon removed. That campaign stills.</p>
+      <button type="button" class="card" data-slug="korea" data-place="Seoul" data-claim="Yoon removed. That campaign stills.">
+        <span class="chip done">Fulfilled</span>
+        <strong>South Korea anti-martial-law</strong>
+        <span class="place">Seoul</span>
+        <span class="claim">Yoon removed. That campaign stills.</span>
       </button>
-      <button type="button" class="card" data-slug="bulgaria" data-place="Sofia" data-name="Bulgaria budget protests" data-claim="Budget pulled. Government resigned.">
-        <p class="place">Sofia</p>
-        <h3>Bulgaria budget protests</h3>
-        <p class="claim">Budget pulled. Government resigned.</p>
+      <button type="button" class="card" data-slug="bulgaria" data-place="Sofia" data-claim="Budget pulled. Government resigned.">
+        <span class="chip done">Fulfilled</span>
+        <strong>Bulgaria budget protests</strong>
+        <span class="place">Sofia</span>
+        <span class="claim">Budget pulled. Government resigned.</span>
       </button>
     </div>
   </section>
 
   <footer>
+    <p>Record and upload stay in the movement’s window. Related memory goes to Internet Archive and Filecoin.</p>
     <p>Without time and space we are one. Only time and space has power for change.</p>
-    <p>Future generations are you and your children’s children.</p>
   </footer>
 
   <div id="window" class="overlay hidden" role="dialog" aria-modal="true"></div>
