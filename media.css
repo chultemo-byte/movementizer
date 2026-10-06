@@ -54,3 +54,10 @@
   .overlay { padding: 0; }
   .sheet { max-height: 100vh; height: 100%; }
 }
+.banner { margin: -1.25rem -1.15rem 1rem; background: #000; }
+.banner .yt img { opacity: .92; }
+.banner .play { width: 76px; height: 52px; margin: -26px 0 0 -38px; }
+.banner .play::after { left: 30px; top: 15px; border-width: 11px 0 11px 18px; }
+.banner figcaption { background: var(--ink); color: var(--paper); padding: .55rem 1.15rem .65rem; font-size: .86rem; line-height: 1.35; }
+.banner .credit { display: block; color: rgba(243,238,230,.7); font-size: .76rem; margin-top: .15rem; }
+.banner a { color: inherit; }

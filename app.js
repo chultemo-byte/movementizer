@@ -31,8 +31,10 @@ function mediaHTML(slug) {
       </figure>`;
     }).join("") + `</div>`;
   }
-  if (m.videos && m.videos.length) {
-    out += `<h2 class="media-h">Video</h2><div class="videos">` + m.videos.map((v) => `
+  const b = (window.MOVEMENT_BANNERS || {})[slug];
+  const vids = (m.videos || []).filter((v) => !b || v.id !== b.id);
+  if (vids.length) {
+    out += `<h2 class="media-h">Video</h2><div class="videos">` + vids.map((v) => `
       <figure>
         <button type="button" class="yt" data-yt="${esc(v.id)}" aria-label="Play video: ${esc(v.title)}">
           <img src="https://i.ytimg.com/vi/${esc(v.id)}/hqdefault.jpg" alt="" loading="lazy" decoding="async" />
@@ -46,6 +48,20 @@ function mediaHTML(slug) {
       <li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a> <span class="credit">${esc(s.outlet)} · ${esc(s.date)}</span></li>`).join("") + `</ul>`;
   }
   return out ? `<section class="media">${out}</section>` : "";
+}
+
+function bannerHTML(slug) {
+  const b = (window.MOVEMENT_BANNERS || {})[slug];
+  if (!b) return "";
+  const poster = "https://i.ytimg.com/vi/" + b.id + "/" + (b.poster || "hqdefault") + ".jpg";
+  return `
+      <figure class="banner">
+        <button type="button" class="yt" data-yt="${esc(b.id)}" aria-label="Play video: ${esc(b.title)}">
+          <img src="${esc(poster)}" alt="" decoding="async" />
+          <span class="play" aria-hidden="true"></span>
+        </button>
+        <figcaption><b>${esc(b.channel)}</b> · ${esc(b.title)}<span class="credit">${Number(b.views).toLocaleString("en-US")} views as of ${esc(b.checked)} · <a href="https://www.youtube.com/watch?v=${esc(b.id)}" target="_blank" rel="noopener">YouTube</a></span></figcaption>
+      </figure>`;
 }
 
 function playVideo(btn) {
@@ -68,7 +84,7 @@ function openWindow(card) {
   const claim = card.dataset.claim;
   overlay.classList.remove("hidden");
   overlay.innerHTML = `
-    <div class="sheet">
+    <div class="sheet">${bannerHTML(card.dataset.slug)}
       <button type="button" class="close" id="close-window">Back to the registry</button>
       <h1>${name}</h1>
       <p class="meta">${place}. ${claim}</p>
@@ -123,7 +139,12 @@ function loadMedia(done) {
   document.head.appendChild(css);
   const js = document.createElement("script");
   js.src = "media.js";
-  js.onload = js.onerror = done;
+  js.onload = js.onerror = () => {
+    const bj = document.createElement("script");
+    bj.src = "banners.js";
+    bj.onload = bj.onerror = done;
+    document.head.appendChild(bj);
+  };
   document.head.appendChild(js);
 }
 
