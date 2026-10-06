@@ -149,6 +149,8 @@ function loadMedia(done) {
 }
 
 loadMedia(() => {
+  window.MOVEMENT_MEDIA_READY = true;
+  document.dispatchEvent(new Event("movement-media"));
   if (currentCard && !overlay.classList.contains("hidden")) openWindow(currentCard);
 });
 
