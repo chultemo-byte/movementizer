@@ -1,0 +1,56 @@
+.media { margin-top: 1.1rem; border-top: 1px solid var(--line); padding-top: .4rem; }
+.media-h {
+  font-size: 1.15rem;
+  letter-spacing: -.01em;
+  margin: .9rem 0 .5rem;
+}
+.gallery, .videos { display: grid; gap: .7rem; }
+@media (min-width: 560px) {
+  .gallery { grid-template-columns: 1fr 1fr; }
+}
+.media figure { margin: 0; background: var(--card); border: 1px solid var(--line); }
+.media figure img { display: block; width: 100%; height: auto; }
+.gallery figure img { aspect-ratio: 4 / 3; object-fit: cover; }
+.media figcaption { padding: .45rem .6rem .55rem; font-size: .82rem; line-height: 1.35; }
+.media .credit { display: block; color: var(--muted); font-size: .74rem; margin-top: .15rem; }
+.media a { color: inherit; }
+.yt {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: #000;
+  cursor: pointer;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+.yt img { width: 100%; height: 100%; object-fit: cover; opacity: .85; }
+.yt:hover img, .yt:focus-visible img { opacity: 1; }
+.yt .play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 64px;
+  height: 44px;
+  margin: -22px 0 0 -32px;
+  border-radius: 10px;
+  background: rgba(180,35,24,.92);
+}
+.yt .play::after {
+  content: "";
+  position: absolute;
+  left: 26px;
+  top: 13px;
+  border-style: solid;
+  border-width: 9px 0 9px 15px;
+  border-color: transparent transparent transparent #fff;
+}
+.yt-frame { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; }
+.sources { margin: 0; padding-left: 1.1rem; font-size: .88rem; line-height: 1.45; }
+.sources li { margin: .25rem 0; }
+.sources .credit { display: inline; }
+@media (max-width: 559px) {
+  .overlay { padding: 0; }
+  .sheet { max-height: 100vh; height: 100%; }
+}
