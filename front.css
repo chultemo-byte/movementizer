@@ -257,6 +257,9 @@ body footer { border-top: 1px solid var(--hair); color: var(--dim); margin-top: 
   --ink: #141311; --muted: #5e584f; --paper: #f3eee6; --card: #fffcf7; --line: rgba(20,19,17,.12);
   color: var(--ink);
 }
+/* Movementizer's written text in the pop-up: bold black on the paper (#111 on #f3eee6, ~17:1). */
+.overlay .sheet .meta,
+.overlay .sheet #window-note { color: #111; font-weight: 700; }
 
 @media (prefers-reduced-motion: reduce) {
   .ticker-track, .reel-track, .tile img, .thumb img, .dish::before, .rdot, .rdot::after, .pill::before, .chip::before, .tk b::before, .status .dot, .mast h1::before, .band-head h2::before { animation: none !important; }
