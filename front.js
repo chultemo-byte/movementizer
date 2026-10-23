@@ -70,7 +70,7 @@
         b.style.left = (50 + r * Math.cos(a)) + "%";
         b.style.top = (50 + r * Math.sin(a)) + "%";
         b.style.setProperty("--d", (i * 0.37).toFixed(2) + "s");
-        b.setAttribute("aria-label", name[s] + " — " + LABEL[st]);
+        b.setAttribute("aria-label", name[s] + " - " + LABEL[st]);
         b.dataset.open = s;
         if ((Math.cos(a)) > 0.35) b.classList.add("flip");
         dish.appendChild(b);
@@ -113,7 +113,7 @@
     reel.setAttribute("aria-label", "Movements in real media. Select one to open its window.");
     const row = (items, dir) => {
       const r = el("div", "reel-row " + dir);
-      const tiles = (dup) => items.map((x, i) => `<button type="button" class="tile" data-open="${esc(x.s)}" title="${esc(name[x.s] + " — " + x.credit)}"${dup ? ' tabindex="-1" aria-hidden="true"' : ""}><img src="${esc(x.img)}" alt="" loading="lazy" decoding="async" style="--k:${(i % 5) * 1.7}s" /><span class="cap">${pill(status[x.s])}<strong>${esc(name[x.s])}</strong><small>${esc(x.credit)}</small></span></button>`).join("");
+      const tiles = (dup) => items.map((x, i) => `<button type="button" class="tile" data-open="${esc(x.s)}" title="${esc(name[x.s] + " - " + x.credit)}"${dup ? ' tabindex="-1" aria-hidden="true"' : ""}><img src="${esc(x.img)}" alt="" loading="lazy" decoding="async" style="--k:${(i % 5) * 1.7}s" /><span class="cap">${pill(status[x.s])}<strong>${esc(name[x.s])}</strong><small>${esc(x.credit)}</small></span></button>`).join("");
       const tr = el("div", "reel-track", tiles(false) + (reduce ? "" : tiles(true)));
       tr.style.setProperty("--dur", Math.max(50, items.length * 7) + "s");
       r.appendChild(tr);
@@ -167,7 +167,7 @@
 
     function build(slug, title) {
       const url = shareUrl(slug);
-      const text = title + " — a movement window on Movementizer, the Earth radar.";
+      const text = title + " - a movement window on Movementizer, the Earth radar.";
       const wrap = document.createElement("div");
       wrap.className = "share-wrap";
       const u = encodeURIComponent(url);
