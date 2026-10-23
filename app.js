@@ -90,14 +90,9 @@ function openWindow(card) {
       <p class="meta">${place}. ${claim}</p>
       <p id="window-note">This window is registered. Real video belongs here. When the street stills, the window stays.</p>
       ${mediaHTML(card.dataset.slug)}
-      <div class="actions">
-        <button type="button" id="record">Record video</button>
-        <button type="button" id="upload">Upload video</button>
-      </div>
+      <div class="actions"></div>
     </div>`;
   overlay.querySelector("#close-window").onclick = closeWindow;
-  overlay.querySelector("#record").onclick = () => startRecord();
-  overlay.querySelector("#upload").onclick = () => startUpload();
   overlay.querySelectorAll(".yt").forEach((b) => b.addEventListener("click", () => playVideo(b)));
   const sheet = overlay.querySelector(".sheet");
   if (sheet) sheet.scrollTop = 0;
@@ -109,16 +104,6 @@ function closeWindow() {
   overlay.innerHTML = "";
   currentCard = null;
   history.replaceState(null, "", "./");
-}
-
-function startRecord() {
-  const note = overlay.querySelector("#window-note");
-  if (note) note.textContent = "Camera for this window is next. The record will stay with this movement.";
-}
-
-function startUpload() {
-  const note = overlay.querySelector("#window-note");
-  if (note) note.textContent = "Upload for this window is next. Files will also go to Internet Archive and Filecoin.";
 }
 
 document.querySelectorAll(".card").forEach((card) => {

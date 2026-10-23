@@ -70,7 +70,7 @@
         b.style.left = (50 + r * Math.cos(a)) + "%";
         b.style.top = (50 + r * Math.sin(a)) + "%";
         b.style.setProperty("--d", (i * 0.37).toFixed(2) + "s");
-        b.setAttribute("aria-label", name[s] + " — " + LABEL[st]);
+        b.setAttribute("aria-label", name[s] + " - " + LABEL[st]);
         b.dataset.open = s;
         if ((Math.cos(a)) > 0.35) b.classList.add("flip");
         dish.appendChild(b);
@@ -113,7 +113,7 @@
     reel.setAttribute("aria-label", "Movements in real media. Select one to open its window.");
     const row = (items, dir) => {
       const r = el("div", "reel-row " + dir);
-      const tiles = (dup) => items.map((x, i) => `<button type="button" class="tile" data-open="${esc(x.s)}" title="${esc(name[x.s] + " — " + x.credit)}"${dup ? ' tabindex="-1" aria-hidden="true"' : ""}><img src="${esc(x.img)}" alt="" loading="lazy" decoding="async" style="--k:${(i % 5) * 1.7}s" /><span class="cap">${pill(status[x.s])}<strong>${esc(name[x.s])}</strong><small>${esc(x.credit)}</small></span></button>`).join("");
+      const tiles = (dup) => items.map((x, i) => `<button type="button" class="tile" data-open="${esc(x.s)}" title="${esc(name[x.s] + " - " + x.credit)}"${dup ? ' tabindex="-1" aria-hidden="true"' : ""}><img src="${esc(x.img)}" alt="" loading="lazy" decoding="async" style="--k:${(i % 5) * 1.7}s" /><span class="cap">${pill(status[x.s])}<strong>${esc(name[x.s])}</strong><small>${esc(x.credit)}</small></span></button>`).join("");
       const tr = el("div", "reel-track", tiles(false) + (reduce ? "" : tiles(true)));
       tr.style.setProperty("--dur", Math.max(50, items.length * 7) + "s");
       r.appendChild(tr);
@@ -126,7 +126,8 @@
   if (window.MOVEMENT_MEDIA_READY) withMedia();
   else document.addEventListener("movement-media", withMedia, { once: true });
 
-  // Share: button in every movement window, next to Record / Upload. URL always uses the window's real slug.
+  // Share: button in every movement window. URL always uses the window's real slug.
+  // Inside the iOS app the button opens the system share sheet and skips this menu.
   (function shareWindow() {
     const overlay = document.getElementById("window");
     if (!overlay) return;
@@ -167,7 +168,7 @@
 
     function build(slug, title) {
       const url = shareUrl(slug);
-      const text = title + " — a movement window on Movementizer, the Earth radar.";
+      const text = title + " - a movement window on Movementizer, the Earth radar.";
       const wrap = document.createElement("div");
       wrap.className = "share-wrap";
       const u = encodeURIComponent(url);
@@ -208,12 +209,28 @@
       if (!slug || !document.querySelector('.card[data-slug="' + slug + '"]')) return;
       const h1 = sheet.querySelector("h1");
       const title = ((h1 && h1.textContent) || name[slug] || slug).trim();
+      const url = shareUrl(slug);
+      const text = title + " - a movement window on Movementizer, the Earth radar.";
       const btn = document.createElement("button");
       btn.type = "button";
       btn.id = "share";
       btn.className = "share-btn";
       btn.textContent = "Share";
       btn.setAttribute("aria-label", "Share " + title);
+      const inApp = window.ReactNativeWebView && typeof window.ReactNativeWebView.postMessage === "function";
+      if (inApp) {
+        btn.setAttribute("data-native-share", "1");
+        btn.addEventListener("click", () => {
+          window.ReactNativeWebView.postMessage(JSON.stringify({
+            type: "share",
+            title: title,
+            text: text,
+            url: url
+          }));
+        });
+        actions.appendChild(btn);
+        return;
+      }
       btn.setAttribute("aria-haspopup", "true");
       btn.setAttribute("aria-expanded", "false");
       btn.setAttribute("aria-controls", "share-menu");

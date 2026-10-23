@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "Movementizer",
+    "slug": "movementizer",
+    "owner": "khardhridaya",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "backgroundColor": "#0a0e16",
+    "userInterfaceStyle": "dark",
+    "scheme": "movementizer",
+    "ios": {
+      "bundleIdentifier": "com.khardhridayainc.movementizer",
+      "buildNumber": "1",
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.khardhridayainc.movementizer",
+      "versionCode": 1,
+      "predictiveBackGestureEnabled": false,
+      "adaptiveIcon": {
+        "backgroundColor": "#0a0e16",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0a0e16",
+          "image": "./assets/splash-icon.png",
+          "resizeMode": "contain",
+          "imageWidth": 280
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#48e0c0",
+          "defaultChannel": "movement-windows",
+          "enableRemoteNotifications": false
+        }
+      ]
+    ]
+  }
+}
