@@ -309,3 +309,34 @@ body a.status { color: var(--sig-done); text-decoration: none; }
   border-bottom: 1px solid rgba(245,239,228,.35);
 }
 .legal-nav a:hover, .legal-nav a:focus-visible { border-bottom-color: var(--sig-still); }
+
+.overlay .sheet .ground { margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.ground-title { font-size: 1.8rem; margin: 0 0 .3rem; }
+.ground-lead, .ground-note, .ground-empty, .ground-caption, .ground-meta, .ground-label { line-height: 1.45; }
+.ground-label { font-weight: 600; }
+.ground-input, .ground-form input[type="text"], .ground-form input[type="password"], .ground-form textarea, .ground-field input, .ground textarea.ground-input {
+  width: 100%;
+  font: inherit;
+  margin: .25rem 0 .6rem;
+  padding: .55rem .7rem;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: inherit;
+}
+.ground-field { display: block; margin: .3rem 0; }
+.ground-check { display: flex; gap: .5rem; align-items: flex-start; margin: .2rem 0 .8rem; }
+.ground-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin: .4rem 0; }
+.ground-actions button, .ground-form > button, .ground-preview button {
+  font: inherit;
+  min-height: 44px;
+  padding: .5rem .85rem;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.ground-clip { margin: .9rem 0; padding-top: .8rem; border-top: 1px solid var(--line); }
+.ground-clip img, .ground-clip video, .ground-preview img, .ground-preview video { width: 100%; max-height: 420px; background: #111; display: block; }
+.ground-terms { border: 1px solid var(--line); padding: .8rem; margin-bottom: .8rem; }
+.ground-terms a { color: inherit; }
+.ground-terms p { margin-top: 0; }

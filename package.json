@@ -1,0 +1,28 @@
+{
+  "name": "movementizer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Register all active movements on Earth. Each movement its own window. Only real-time real video. Free of everything.",
+  "scripts": {
+    "test": "node --test lib/ground/logic.test.js",
+    "build:upload": "esbuild lib/ground/browser-upload.js --bundle --format=iife --platform=browser --outfile=ground-upload.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chultemo-byte/movementizer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chultemo-byte/movementizer/issues"
+  },
+  "homepage": "https://github.com/chultemo-byte/movementizer#readme",
+  "dependencies": {
+    "@neondatabase/serverless": "^1.2.0",
+    "@vercel/blob": "^2.8.2",
+    "ai": "^7.0.152",
+    "zod": "^4.6.7"
+  }
+}

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Moderation - Movementizer</title>
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#0a0e16" />
+  <link rel="icon" href="/icons/icon-192.png" type="image/png" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/front.css" />
+</head>
+<body class="sub">
+  <header class="mast">
+    <div class="row">
+      <p class="mark">Movementizer</p>
+      <a class="status" href="/">Back to the radar</a>
+    </div>
+    <h1>Moderation</h1>
+    <p class="law">Pending clips only. Approve, reject, or ban. One tap each.</p>
+  </header>
+  <section class="doc">
+    <form id="gate" class="ground-form">
+      <label class="ground-field">Admin token
+        <input id="token" class="ground-input" type="password" autocomplete="current-password" />
+      </label>
+      <button type="submit">Open the queue</button>
+      <p id="note" class="ground-note" role="status"></p>
+    </form>
+    <div id="queue" class="ground-feed"></div>
+  </section>
+  <script>
+    const tokenInput = document.getElementById("token");
+    const note = document.getElementById("note");
+    const queue = document.getElementById("queue");
+    tokenInput.value = sessionStorage.getItem("movementizer.admin.token") || "";
+    document.getElementById("gate").addEventListener("submit", (event) => {
+      event.preventDefault();
+      sessionStorage.setItem("movementizer.admin.token", tokenInput.value.trim());
+      load();
+    });
+
+    async function load() {
+      note.textContent = "Loading the queue.";
+      const response = await fetch("/api/admin/queue", { headers: auth() });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        note.textContent = data.error || "Could not open the queue.";
+        queue.replaceChildren();
+        return;
+      }
+      note.textContent = data.clips.length ? data.clips.length + " waiting." : "The queue is empty.";
+      queue.replaceChildren();
+      data.clips.forEach((clip) => queue.appendChild(card(clip)));
+    }
+
+    function card(clip) {
+      const item = document.createElement("article");
+      item.className = "ground-clip";
+      const title = document.createElement("h2");
+      title.textContent = clip.title + " · " + clip.handle;
+      const meta = document.createElement("p");
+      meta.textContent = clip.status + (clip.trusted ? " · trusted poster" : "") + (clip.place ? " · " + clip.place : "");
+      const caption = document.createElement("p");
+      caption.textContent = clip.caption || "(no caption)";
+      const ai = document.createElement("p");
+      ai.textContent = clip.ai ? "Check: " + JSON.stringify(clip.ai) : "No automatic check yet.";
+      item.append(title, meta, caption, ai);
+      const holder = document.createElement("div");
+      item.appendChild(holder);
+      fetch(clip.media, { headers: auth() }).then((response) => response.ok ? response.blob() : null).then((blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const node = clip.kind === "video" ? document.createElement("video") : document.createElement("img");
+        if (clip.kind === "video") node.controls = true;
+        node.src = url;
+        if (node.tagName === "IMG") node.alt = "";
+        holder.appendChild(node);
+      });
+      const row = document.createElement("div");
+      row.className = "ground-actions";
+      row.append(
+        action("Approve", { action: "approve", clipId: clip.id }),
+        action("Reject", { action: "reject", clipId: clip.id }),
+        action("Ban", { action: "ban", posterId: clip.posterId }),
+        action(clip.trusted ? "Remove trust" : "Trust poster", { action: clip.trusted ? "untrust" : "trust", posterId: clip.posterId })
+      );
+      item.appendChild(row);
+      return item;
+    }
+
+    function action(label, body) {
+      const node = document.createElement("button");
+      node.type = "button";
+      node.textContent = label;
+      node.addEventListener("click", async () => {
+        note.textContent = label + "...";
+        const response = await fetch("/api/admin/queue", {
+          method: "POST",
+          headers: Object.assign({ "content-type": "application/json" }, auth()),
+          body: JSON.stringify(body),
+        });
+        const data = await response.json().catch(() => ({}));
+        note.textContent = response.ok ? "Done." : (data.error || "That action failed.");
+        if (response.ok) load();
+      });
+      return node;
+    }
+
+    function auth() {
+      return { authorization: "Bearer " + (sessionStorage.getItem("movementizer.admin.token") || "") };
+    }
+  </script>
+</body>
+</html>
