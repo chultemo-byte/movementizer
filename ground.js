@@ -281,8 +281,8 @@
     const blocked = blockedSet();
     try {
       const response = await fetch("/api/ground?slug=" + encodeURIComponent(slug) + "&viewer=" + encodeURIComponent(loadId()));
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "The ground feed is not available.");
+      const data = await response.json().catch(() => null);
+      if (!response.ok || !data) throw new Error((data && data.error) || "The ground feed is not connected yet.");
       feed.replaceChildren();
       const clips = (data.clips || []).filter((clip) => !blocked.has(clip.posterId));
       if (!clips.length) {
