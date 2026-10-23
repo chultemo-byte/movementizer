@@ -1,7 +1,8 @@
-// Runs inside the site. Hides leftover record/upload controls, opens the
-// native share sheet from the Share button, and asks for a light haptic
-// when a movement is opened. Android pull-down at the top of the page
-// asks the shell to reload. iOS uses the WebView pull-to-refresh control.
+// Runs inside the site. Opens the native share sheet from the Share button,
+// and asks for a light haptic when a movement is opened. Record and Upload
+// are handled by ground.js, which asks this shell for the camera.
+// Android pull-down at the top of the page asks the shell to reload.
+// iOS uses the WebView pull-to-refresh control.
 export const BRIDGE_JS = `
 (function () {
   if (window.__MOVEMENTIZER_BRIDGE__) return;
@@ -13,17 +14,7 @@ export const BRIDGE_JS = `
   }
 
   function boot() {
-    var style = document.getElementById("mvz-app-hide");
-    if (!style) {
-      style = document.createElement("style");
-      style.id = "mvz-app-hide";
-      style.textContent = "#record,#upload{display:none !important}";
-      (document.head || document.documentElement).appendChild(style);
-    }
-
     function scan() {
-      var dead = document.querySelectorAll("#record,#upload");
-      for (var i = 0; i < dead.length; i++) dead[i].remove();
       var share = document.getElementById("share");
       if (!share || share.getAttribute("data-native-share") === "1" || share.getAttribute("data-app-share") === "1") return;
       share.setAttribute("data-app-share", "1");

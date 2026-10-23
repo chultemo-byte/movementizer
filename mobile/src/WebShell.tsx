@@ -30,6 +30,7 @@ import {
   prepareNotifications,
 } from "./alerts";
 import { AlertsSheet } from "./AlertsSheet";
+import { captureGroundClip, type GroundRequest } from "./groundCapture";
 import { BACK_JS, BRIDGE_JS } from "./inject";
 import { decideNavigation, shareUrlOnSite, SITE_URL } from "./navigationPolicy";
 import { OfflineScreen } from "./OfflineScreen";
@@ -105,7 +106,13 @@ export function WebShell() {
 
   const onMessage = useCallback(
     (event: WebViewMessageEvent) => {
-      let data: { type?: string; handled?: boolean; title?: string; text?: string; url?: string };
+      let data: {
+        type?: string;
+        handled?: boolean;
+        title?: string;
+        text?: string;
+        url?: string;
+      } & GroundRequest;
       try {
         data = JSON.parse(event.nativeEvent.data) as typeof data;
       } catch {
@@ -122,6 +129,23 @@ export function WebShell() {
         if (data.handled) return;
         if (canGoBack.current) webRef.current?.goBack();
         else BackHandler.exitApp();
+      } else if (data.type === "ground") {
+        tap();
+        void captureGroundClip(data).then((error) => {
+          if (error === "cancelled") return;
+          if (error) {
+            webRef.current?.injectJavaScript(
+              "window.__groundFail && window.__groundFail(" + JSON.stringify(error) + "); true;",
+            );
+            return;
+          }
+          webRef.current?.injectJavaScript("window.__groundReload && window.__groundReload(); true;");
+        }).catch((error: unknown) => {
+          const message = error instanceof Error ? error.message : "The clip was not posted.";
+          webRef.current?.injectJavaScript(
+            "window.__groundFail && window.__groundFail(" + JSON.stringify(message) + "); true;",
+          );
+        });
       }
     },
     [shareFromSite, tap],
