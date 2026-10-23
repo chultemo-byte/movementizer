@@ -126,7 +126,8 @@
   if (window.MOVEMENT_MEDIA_READY) withMedia();
   else document.addEventListener("movement-media", withMedia, { once: true });
 
-  // Share: button in every movement window, next to Record / Upload. URL always uses the window's real slug.
+  // Share: button in every movement window. URL always uses the window's real slug.
+  // Inside the iOS app the button opens the system share sheet and skips this menu.
   (function shareWindow() {
     const overlay = document.getElementById("window");
     if (!overlay) return;
@@ -208,12 +209,28 @@
       if (!slug || !document.querySelector('.card[data-slug="' + slug + '"]')) return;
       const h1 = sheet.querySelector("h1");
       const title = ((h1 && h1.textContent) || name[slug] || slug).trim();
+      const url = shareUrl(slug);
+      const text = title + " - a movement window on Movementizer, the Earth radar.";
       const btn = document.createElement("button");
       btn.type = "button";
       btn.id = "share";
       btn.className = "share-btn";
       btn.textContent = "Share";
       btn.setAttribute("aria-label", "Share " + title);
+      const inApp = window.ReactNativeWebView && typeof window.ReactNativeWebView.postMessage === "function";
+      if (inApp) {
+        btn.setAttribute("data-native-share", "1");
+        btn.addEventListener("click", () => {
+          window.ReactNativeWebView.postMessage(JSON.stringify({
+            type: "share",
+            title: title,
+            text: text,
+            url: url
+          }));
+        });
+        actions.appendChild(btn);
+        return;
+      }
       btn.setAttribute("aria-haspopup", "true");
       btn.setAttribute("aria-expanded", "false");
       btn.setAttribute("aria-controls", "share-menu");
