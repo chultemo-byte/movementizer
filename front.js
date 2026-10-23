@@ -125,4 +125,115 @@
   }
   if (window.MOVEMENT_MEDIA_READY) withMedia();
   else document.addEventListener("movement-media", withMedia, { once: true });
+
+  // Share: button in every movement window, next to Record / Upload. URL always uses the window's real slug.
+  (function shareWindow() {
+    const overlay = document.getElementById("window");
+    if (!overlay) return;
+    const ORIGIN = "https://movementizer.com";
+    const canNative = typeof navigator.share === "function";
+    let timer = 0;
+
+    function shareUrl(slug) { return ORIGIN + "/?w=" + encodeURIComponent(slug); }
+
+    function copyText(text) {
+      const legacy = () => {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.setAttribute("aria-hidden", "true");
+        ta.style.cssText = "position:fixed;top:0;left:0;opacity:0;font-size:16px";
+        document.body.appendChild(ta);
+        ta.select();
+        ta.setSelectionRange(0, text.length);
+        let ok = false;
+        try { ok = document.execCommand("copy"); } catch (err) { ok = false; }
+        document.body.removeChild(ta);
+        return ok;
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+        return navigator.clipboard.writeText(text).then(() => true, () => legacy());
+      }
+      return Promise.resolve(legacy());
+    }
+
+    function say(wrap, msg) {
+      const s = wrap.querySelector(".share-status");
+      if (!s) return;
+      s.textContent = msg;
+      clearTimeout(timer);
+      timer = setTimeout(() => { s.textContent = ""; }, 3500);
+    }
+
+    function build(slug, title) {
+      const url = shareUrl(slug);
+      const text = title + " — a movement window on Movementizer, the Earth radar.";
+      const wrap = document.createElement("div");
+      wrap.className = "share-wrap";
+      const u = encodeURIComponent(url);
+      wrap.innerHTML =
+        `<div class="share-menu" id="share-menu" role="group" aria-label="Share ${esc(title)}" hidden>` +
+        (canNative ? `<button type="button" class="share-opt" data-share="native">Share via device…</button>` : "") +
+        `<a class="share-opt" data-share="facebook" href="https://www.facebook.com/sharer/sharer.php?u=${u}" target="_blank" rel="noopener noreferrer">Facebook</a>` +
+        `<a class="share-opt" data-share="x" href="https://twitter.com/intent/tweet?url=${u}&amp;text=${encodeURIComponent(title)}" target="_blank" rel="noopener noreferrer">X</a>` +
+        `<button type="button" class="share-opt" data-share="instagram">Instagram</button>` +
+        `<button type="button" class="share-opt" data-share="tiktok">TikTok</button>` +
+        `<button type="button" class="share-opt" data-share="copy">Copy link</button>` +
+        `</div><span class="share-status" role="status" aria-live="polite"></span>`;
+
+      wrap.addEventListener("click", (e) => {
+        const o = e.target.closest("[data-share]");
+        if (!o) return;
+        const kind = o.dataset.share;
+        if (kind === "native") {
+          navigator.share({ title: title, text: text, url: url }).catch(() => {});
+        } else if (kind === "copy") {
+          copyText(url).then((ok) => say(wrap, ok ? "Link copied" : "Copy failed. Link: " + url));
+        } else if (kind === "instagram" || kind === "tiktok") {
+          const label = kind === "instagram" ? "Instagram" : "TikTok";
+          const dest = kind === "instagram" ? "https://www.instagram.com/" : "https://www.tiktok.com/";
+          const copying = copyText(url);
+          window.open(dest, "_blank", "noopener,noreferrer");
+          copying.then((ok) => say(wrap, ok ? "Link copied, paste it in " + label : "Copy failed. Link: " + url));
+        }
+      });
+      return wrap;
+    }
+
+    function inject() {
+      const sheet = overlay.querySelector(".sheet");
+      const actions = sheet && sheet.querySelector(".actions");
+      if (!actions || actions.querySelector("#share")) return;
+      const slug = new URLSearchParams(location.search).get("w");
+      if (!slug || !document.querySelector('.card[data-slug="' + slug + '"]')) return;
+      const h1 = sheet.querySelector("h1");
+      const title = ((h1 && h1.textContent) || name[slug] || slug).trim();
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.id = "share";
+      btn.className = "share-btn";
+      btn.textContent = "Share";
+      btn.setAttribute("aria-label", "Share " + title);
+      btn.setAttribute("aria-haspopup", "true");
+      btn.setAttribute("aria-expanded", "false");
+      btn.setAttribute("aria-controls", "share-menu");
+      const wrap = build(slug, title);
+      const menu = wrap.querySelector(".share-menu");
+      btn.addEventListener("click", () => {
+        const open = menu.hidden;
+        menu.hidden = !open;
+        btn.setAttribute("aria-expanded", open ? "true" : "false");
+        if (open) { const first = menu.querySelector(".share-opt"); if (first) first.focus(); }
+      });
+      wrap.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !menu.hidden) { e.stopPropagation(); menu.hidden = true; btn.setAttribute("aria-expanded", "false"); btn.focus(); }
+      });
+      actions.appendChild(btn);
+      actions.appendChild(wrap);
+    }
+
+    // The window is rebuilt each time it opens (and again when media loads), so re-add the button after each render.
+    new MutationObserver(inject).observe(overlay, { childList: true });
+    inject();
+  })();
 })();

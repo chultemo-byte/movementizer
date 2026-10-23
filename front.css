@@ -262,3 +262,24 @@ body footer { border-top: 1px solid var(--hair); color: var(--dim); margin-top: 
   .ticker-track, .reel-track, .tile img, .thumb img, .dish::before, .rdot, .rdot::after, .pill::before, .chip::before, .tk b::before, .status .dot, .mast h1::before, .band-head h2::before { animation: none !important; }
   .reel-row, .ticker { overflow-x: auto; }
 }
+
+/* Share button + menu in the pop-up (inherits .actions button look from styles.css) */
+.actions .share-wrap { flex: 1 1 100%; display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; }
+.actions .share-wrap[hidden], .share-menu[hidden] { display: none; }
+.share-menu { display: flex; flex-wrap: wrap; gap: .45rem; }
+.share-opt {
+  font: inherit;
+  font-size: .92rem;
+  color: var(--ink);
+  text-decoration: none;
+  border: 1px solid var(--line);
+  background: var(--card);
+  padding: .5rem .8rem;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+.share-opt:hover, .share-opt:focus-visible { border-color: var(--ink); }
+.actions .share-btn { min-height: 44px; color: var(--ink); }
+.share-status { font-size: .86rem; color: var(--muted); min-height: 1.2em; }
