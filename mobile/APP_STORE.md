@@ -27,7 +27,7 @@ Movementizer is the Earth radar for movements. Each movement has one window. The
 
 Open a window for the place, the claim, photos, and video. Press play when you want the video. Share sends that window through the iPhone share sheet.
 
-The app keeps the radar on movementizer.com. A link that leaves the site opens in Safari.
+The app keeps the radar on movementizer.com. Privacy, Terms, and Support are on the opening screen and in the bar under the title. Back returns to the previous page. A link that leaves the site opens in Safari.
 
 Offline, the app shows its own screen and a Retry button. Pull down on the radar to refresh. A light tap is felt when you open a window, share, or refresh.
 
@@ -110,7 +110,7 @@ Paste this into App Review Information. Sign-in is not required. There is no dem
 ```
 No account and no sign-in.
 
-The app is a native shell around https://movementizer.com. Pages on movementizer.com and www.movementizer.com stay in the app. News links, photo credits, and YouTube watch links open in Safari. A YouTube embed plays inside the window only after the reader presses play.
+The app is a native shell around https://movementizer.com. Pages on movementizer.com and www.movementizer.com stay in the app. Privacy, Terms, and Support are linked at the top of the radar and again on the app bar under the title. Back on that bar returns to the previous page. Each of those pages also has Back to the radar. News links, photo credits, and YouTube watch links open in Safari. A YouTube embed plays inside the window only after the reader presses play.
 
 Airplane mode: the app shows a native offline screen with Retry. Pull down on the radar to refresh.
 
@@ -118,7 +118,7 @@ Open any movement and tap Share. That opens the iOS share sheet. The app does no
 
 Alerts is the button at the top. It is off by default. Turning it on asks for notification permission and saves the current public Live / Still on / Fulfilled labels on the device. The next time the app is opened, a local notification can appear if one of those labels changed. Nothing is checked while the app is closed. There is no push server.
 
-Record and Upload are not in this build. The home-page sentence about the Internet Archive and Filecoin describes a path that is not built. Nothing is uploaded.
+Record and Upload are not in this build. Nothing is sent to the Internet Archive or to Filecoin.
 
 Contact: hridaya.8888@gmail.com
 ```

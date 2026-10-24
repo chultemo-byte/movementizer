@@ -21,9 +21,25 @@ export const BRIDGE_JS = `
       (document.head || document.documentElement).appendChild(style);
     }
 
+    function watchWindow() {
+      var overlay = document.getElementById("window");
+      if (!overlay || overlay.getAttribute("data-window-watch") === "1") return;
+      overlay.setAttribute("data-window-watch", "1");
+      var lastOpen = null;
+      var report = function () {
+        var open = !overlay.classList.contains("hidden");
+        if (open === lastOpen) return;
+        lastOpen = open;
+        post({ type: "window", open: open });
+      };
+      new MutationObserver(report).observe(overlay, { attributes: true, attributeFilter: ["class"] });
+      report();
+    }
+
     function scan() {
       var dead = document.querySelectorAll("#record,#upload");
       for (var i = 0; i < dead.length; i++) dead[i].remove();
+      watchWindow();
       var share = document.getElementById("share");
       if (!share || share.getAttribute("data-native-share") === "1" || share.getAttribute("data-app-share") === "1") return;
       share.setAttribute("data-app-share", "1");
@@ -44,9 +60,10 @@ export const BRIDGE_JS = `
     new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
 
     document.addEventListener("click", function (event) {
+      if (!event.isTrusted) return;
       var target = event.target;
       if (!target || !target.closest) return;
-      var hit = target.closest(".card,[data-open],.rdot,.tile,.tk");
+      var hit = target.closest(".card,[data-open],.rdot,.tile,.tk,.legal-nav a,a.status");
       if (!hit || hit.id === "share") return;
       post({ type: "haptic" });
     }, true);

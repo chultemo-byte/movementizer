@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Movementizer - Earth radar</title>
   <meta name="description" content="The Earth radar for movements. One window each. Real video. Then memory." />
   <meta name="theme-color" content="#0a0e16" />
@@ -19,13 +19,22 @@
   <link rel="stylesheet" href="front.css" />
 </head>
 <body>
+  <a class="skip" href="#radar">Skip to movements</a>
   <header class="mast">
     <div class="row">
       <p class="mark">Movementizer</p>
-      <p class="status"><span class="dot" aria-hidden="true"></span> Radar live · bot every 4 hours</p>
+      <div class="mast-tools">
+        <p class="status"><span class="dot" aria-hidden="true"></span> Radar live · checked every 4 hours</p>
+        <nav class="legal-nav" aria-label="Privacy, terms, and support">
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+          <a href="/support">Support</a>
+        </nav>
+      </div>
     </div>
     <h1>Earth radar</h1>
     <p class="law">The biggest movement radar on the planet: register every movement in its own window. Scale as last seen. We do not award victory. Only real video.</p>
+    <p class="howto">Tap a movement to open its window.</p>
   </header>
 
   <section class="radar" id="radar">
@@ -169,9 +178,9 @@
   </section>
 
   <footer>
-    <p>Radar bot checks the house and the street every 4 hours, then updates and fixes. Memory goes to Internet Archive and Filecoin.</p>
+    <p>The radar is checked about every 4 hours, then the windows are updated.</p>
     <p>Without time and space we are one. Only time and space has power for change.</p>
-    <nav class="legal-nav" aria-label="Site">
+    <nav class="legal-nav" aria-label="Privacy, terms, and support">
       <a href="/privacy">Privacy</a>
       <a href="/terms">Terms</a>
       <a href="/support">Support</a>

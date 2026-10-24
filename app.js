@@ -84,26 +84,31 @@ function openWindow(card) {
   const claim = card.dataset.claim;
   overlay.classList.remove("hidden");
   overlay.innerHTML = `
-    <div class="sheet">${bannerHTML(card.dataset.slug)}
+    <div class="sheet">
       <button type="button" class="close" id="close-window">Back to the registry</button>
-      <h1>${name}</h1>
-      <p class="meta">${place}. ${claim}</p>
+      ${bannerHTML(card.dataset.slug)}
+      <h1>${esc(name)}</h1>
+      <p class="meta">${esc(place)}. ${esc(claim)}</p>
       <p id="window-note">This window is registered. Real video belongs here. When the street stills, the window stays.</p>
       ${mediaHTML(card.dataset.slug)}
       <div class="actions"></div>
     </div>`;
-  overlay.querySelector("#close-window").onclick = closeWindow;
+  const close = overlay.querySelector("#close-window");
+  if (close) close.onclick = closeWindow;
   overlay.querySelectorAll(".yt").forEach((b) => b.addEventListener("click", () => playVideo(b)));
   const sheet = overlay.querySelector(".sheet");
   if (sheet) sheet.scrollTop = 0;
-  history.replaceState(null, "", "?w=" + card.dataset.slug);
+  history.replaceState(null, "", "?w=" + encodeURIComponent(card.dataset.slug));
+  if (close) close.focus();
 }
 
 function closeWindow() {
+  const card = currentCard;
   overlay.classList.add("hidden");
   overlay.innerHTML = "";
   currentCard = null;
   history.replaceState(null, "", "./");
+  if (card) card.focus();
 }
 
 document.querySelectorAll(".card").forEach((card) => {
