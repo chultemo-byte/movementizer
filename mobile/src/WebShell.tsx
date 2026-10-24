@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type ComponentType, type RefAttributes } from "react";
 import {
   ActivityIndicator,
+  Animated,
   AppState,
   BackHandler,
   Linking,
@@ -30,6 +31,7 @@ import {
   prepareNotifications,
 } from "./alerts";
 import { AlertsSheet } from "./AlertsSheet";
+import { chooseBackAction, shouldCommitEdgeBack } from "./edgeSwipe";
 import { BACK_JS, BRIDGE_JS } from "./inject";
 import { decideNavigation, pageFromUrl, shareUrlOnSite, SITE_URL, type SitePage } from "./navigationPolicy";
 import { OfflineScreen } from "./OfflineScreen";
@@ -56,6 +58,8 @@ export function WebShell() {
   const lastShare = useRef(0);
   const lastTap = useRef(0);
   const loadFailed = useRef(false);
+  const [edgeDrag] = useState(() => new Animated.Value(0));
+  const showBackRef = useRef(false);
   const [offline, setOffline] = useState(false);
   const [webError, setWebError] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
@@ -67,6 +71,7 @@ export function WebShell() {
   const [alertsOn, setAlertsOn] = useState(false);
   const [alertNote, setAlertNote] = useState("Off. Nothing is checked.");
   const page = pageFromUrl(navUrl);
+  const showBack = windowOpen || canBack || (page !== "home" && page !== "other");
 
   const hideSplash = useCallback(() => {
     if (splashHidden.current) return;
@@ -95,6 +100,43 @@ export function WebShell() {
     [openExternal],
   );
 
+  const performBack = useCallback((): boolean => {
+    const action = chooseBackAction({
+      windowOpen,
+      canGoBack: canGoBack.current,
+      page,
+      hasWebView: webRef.current != null,
+      offline,
+    });
+    if (action === "window" && webRef.current) {
+      tap();
+      webRef.current.injectJavaScript(BACK_JS);
+      return true;
+    }
+    if (action === "history" && webRef.current) {
+      tap();
+      webRef.current.goBack();
+      return true;
+    }
+    if (action === "home") {
+      tap();
+      setWebError(false);
+      if (webRef.current && !offline) {
+        webRef.current.injectJavaScript(`window.location.assign(${JSON.stringify(SITE_URL + "/")}); true;`);
+        return true;
+      }
+      setStartUrl(SITE_URL);
+      if (!offline) setReloadKey((value) => value + 1);
+      return !offline;
+    }
+    return false;
+  }, [offline, page, tap, windowOpen]);
+
+  const syncCanBack = useCallback(() => {
+    const flag = showBackRef.current ? "true" : "false";
+    webRef.current?.injectJavaScript(`window.__MVZ_CAN_BACK__=${flag}; true;`);
+  }, []);
+
   const shareFromSite = useCallback(
     async (payload: SharePayload) => {
       const url = typeof payload.url === "string" ? shareUrlOnSite(payload.url) : null;
@@ -120,7 +162,17 @@ export function WebShell() {
 
   const onMessage = useCallback(
     (event: WebViewMessageEvent) => {
-      let data: { type?: string; handled?: boolean; open?: boolean; title?: string; text?: string; url?: string };
+      let data: {
+        type?: string;
+        handled?: boolean;
+        open?: boolean;
+        title?: string;
+        text?: string;
+        url?: string;
+        dx?: number;
+        dy?: number;
+        dt?: number;
+      };
       try {
         data = JSON.parse(event.nativeEvent.data) as typeof data;
       } catch {
@@ -135,13 +187,24 @@ export function WebShell() {
         webRef.current?.reload();
       } else if (data.type === "window") {
         setWindowOpen(data.open === true);
+      } else if (data.type === "edge-move") {
+        const dx = typeof data.dx === "number" ? data.dx : 0;
+        edgeDrag.setValue(Math.max(0, Math.min(dx, 140)));
+      } else if (data.type === "edge-cancel") {
+        edgeDrag.setValue(0);
+      } else if (data.type === "edge-end") {
+        edgeDrag.setValue(0);
+        const dx = typeof data.dx === "number" ? data.dx : 0;
+        const dy = typeof data.dy === "number" ? data.dy : 0;
+        const dt = typeof data.dt === "number" ? data.dt : 1;
+        if (shouldCommitEdgeBack(dx, dy, dt, showBackRef.current)) performBack();
       } else if (data.type === "back") {
         if (data.handled) return;
         if (canGoBack.current) webRef.current?.goBack();
         else if (Platform.OS === "android") BackHandler.exitApp();
       }
     },
-    [shareFromSite, tap],
+    [edgeDrag, performBack, shareFromSite, tap],
   );
 
   const openInApp = useCallback(
@@ -158,25 +221,6 @@ export function WebShell() {
     },
     [offline, tap],
   );
-
-  const onBack = useCallback(() => {
-    tap();
-    if (windowOpen && webRef.current) {
-      webRef.current.injectJavaScript(BACK_JS);
-      return;
-    }
-    if (canGoBack.current && webRef.current) {
-      webRef.current.goBack();
-      return;
-    }
-    setWebError(false);
-    if (webRef.current && !offline) {
-      webRef.current.injectJavaScript(`window.location.assign(${JSON.stringify(SITE_URL + "/")}); true;`);
-      return;
-    }
-    setStartUrl(SITE_URL);
-    if (!offline) setReloadKey((value) => value + 1);
-  }, [offline, tap, windowOpen]);
 
   const onNav = useCallback((nav: WebViewNavigation) => {
     canGoBack.current = nav.canGoBack;
@@ -241,11 +285,15 @@ export function WebShell() {
         return true;
       }
       if (offline || webError) return false;
-      webRef.current?.injectJavaScript(BACK_JS);
-      return true;
+      return performBack();
     });
     return () => sub.remove();
-  }, [alertsOpen, offline, webError]);
+  }, [alertsOpen, offline, performBack, webError]);
+
+  useEffect(() => {
+    showBackRef.current = showBack;
+    syncCanBack();
+  }, [reloadKey, showBack, syncCanBack]);
 
   const onHttpError = useCallback(
     (event: WebViewHttpErrorEvent) => {
@@ -259,7 +307,16 @@ export function WebShell() {
   );
 
   const showOffline = offline || webError;
-  const showBack = windowOpen || canBack || (page !== "home" && page !== "other");
+  const cueX = edgeDrag.interpolate({
+    inputRange: [0, 120],
+    outputRange: [-8, 36],
+    extrapolate: "clamp",
+  });
+  const cueOpacity = edgeDrag.interpolate({
+    inputRange: [0, 16, 72],
+    outputRange: [0, 0.35, 1],
+    extrapolate: "clamp",
+  });
 
   return (
     <View style={styles.root}>
@@ -278,7 +335,7 @@ export function WebShell() {
             <Pressable
               accessibilityRole="button"
               accessibilityLabel={windowOpen ? "Back to the radar" : "Back"}
-              onPress={onBack}
+              onPress={performBack}
               style={styles.back}
             >
               <Text style={styles.backText}>Back</Text>
@@ -341,7 +398,10 @@ export function WebShell() {
           pullToRefreshEnabled
           refreshControlLightMode
           contentInsetAdjustmentBehavior="never"
-          allowsBackForwardNavigationGestures
+          // Custom edge swipe replaces this. WKWebView's gesture only walks
+          // history, so it cannot close a movement window, and running both
+          // would step back twice on Privacy, Terms, and Support.
+          allowsBackForwardNavigationGestures={false}
           allowsInlineMediaPlayback
           allowsFullscreenVideo
           mediaPlaybackRequiresUserAction={false}
@@ -361,6 +421,7 @@ export function WebShell() {
           }}
           onLoadEnd={() => {
             hideSplash();
+            syncCanBack();
             if (loadFailed.current) return;
             setWebError(false);
             void checkForStatusChanges();
@@ -378,6 +439,15 @@ export function WebShell() {
           }}
         />
       )}
+      {Platform.OS === "ios" ? (
+        <Animated.View
+          pointerEvents="none"
+          accessible={false}
+          style={[styles.cue, { opacity: cueOpacity, transform: [{ translateX: cueX }] }]}
+        >
+          <View style={styles.chevron} />
+        </Animated.View>
+      ) : null}
       </View>
       <View style={{ height: insets.bottom }} />
       <AlertsSheet
@@ -464,6 +534,30 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 1,
+  },
+  cue: {
+    position: "absolute",
+    left: 0,
+    top: "42%",
+    width: 36,
+    height: 64,
+    borderTopRightRadius: 32,
+    borderBottomRightRadius: 32,
+    backgroundColor: "rgba(10,14,22,0.92)",
+    borderWidth: 1,
+    borderColor: "rgba(72,224,192,0.45)",
+    zIndex: 4,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  chevron: {
+    width: 14,
+    height: 14,
+    marginLeft: 6,
+    borderLeftWidth: 3,
+    borderBottomWidth: 3,
+    borderColor: colors.teal,
+    transform: [{ rotate: "45deg" }],
   },
   web: {
     flex: 1,

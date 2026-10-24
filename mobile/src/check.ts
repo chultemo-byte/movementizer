@@ -1,4 +1,6 @@
 import { readFileSync } from "node:fs";
+import { chooseBackAction, shouldCommitEdgeBack } from "./edgeSwipe";
+import { BRIDGE_JS } from "./inject";
 import { diffStatuses, notificationBody, parseMovementStatuses } from "./movementStatus";
 import { decideNavigation, pageFromUrl, shareUrlOnSite } from "./navigationPolicy";
 
@@ -79,6 +81,83 @@ if (shareUrlOnSite("https://movementizer.com/?w=nokings") === null) {
 }
 if (shareUrlOnSite("https://example.com/") !== null) {
   throw new Error("Off-site share URL should be rejected");
+}
+
+if (
+  chooseBackAction({
+    windowOpen: true,
+    canGoBack: true,
+    page: "home",
+    hasWebView: true,
+    offline: false,
+  }) !== "window"
+) {
+  throw new Error("An open movement window should close before history");
+}
+if (
+  chooseBackAction({
+    windowOpen: false,
+    canGoBack: false,
+    page: "privacy",
+    hasWebView: true,
+    offline: false,
+  }) !== "home"
+) {
+  throw new Error("Privacy with no history should return home");
+}
+if (
+  chooseBackAction({
+    windowOpen: false,
+    canGoBack: true,
+    page: "privacy",
+    hasWebView: true,
+    offline: false,
+  }) !== "history"
+) {
+  throw new Error("Privacy with history should go back");
+}
+if (
+  chooseBackAction({
+    windowOpen: false,
+    canGoBack: false,
+    page: "home",
+    hasWebView: true,
+    offline: false,
+  }) !== "none"
+) {
+  throw new Error("The home radar should not invent a back step");
+}
+if (
+  chooseBackAction({
+    windowOpen: false,
+    canGoBack: false,
+    page: "terms",
+    hasWebView: true,
+    offline: true,
+  }) !== "none"
+) {
+  throw new Error("Offline should not navigate home");
+}
+if (!shouldCommitEdgeBack(80, 10, 200, true)) {
+  throw new Error("A long right swipe should go back");
+}
+if (shouldCommitEdgeBack(20, 40, 200, true)) {
+  throw new Error("A vertical move should not go back");
+}
+if (!shouldCommitEdgeBack(50, 5, 40, true)) {
+  throw new Error("A short fast swipe should go back");
+}
+if (shouldCommitEdgeBack(80, 10, 200, false)) {
+  throw new Error("A swipe should do nothing when Back is hidden");
+}
+if (shouldCommitEdgeBack(30, 5, 400, true)) {
+  throw new Error("A short slow swipe should not go back");
+}
+if (!BRIDGE_JS.includes("clientX > 28") || !BRIDGE_JS.includes("dx > Math.abs(dy) * 1.2")) {
+  throw new Error("The injected edge swipe should match the 28px zone and the 1.2 lock");
+}
+if (!BRIDGE_JS.includes("__MVZ_CAN_BACK__")) {
+  throw new Error("The page should arm the edge swipe only when the shell says Back is available");
 }
 
 console.log("checks ok", slugs.length, "windows");
