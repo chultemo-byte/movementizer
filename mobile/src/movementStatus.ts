@@ -2,7 +2,7 @@ export type StatusName = "Live" | "Still on" | "Fulfilled";
 
 export type Snapshot = Record<string, { name: string; status: StatusName }>;
 
-const SECTIONS: Array<[string, StatusName]> = [
+const SECTIONS: [string, StatusName][] = [
   ["live", "Live"],
   ["still", "Still on"],
   ["fulfilled", "Fulfilled"],

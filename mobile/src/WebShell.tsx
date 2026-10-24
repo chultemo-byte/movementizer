@@ -31,7 +31,7 @@ import {
 } from "./alerts";
 import { AlertsSheet } from "./AlertsSheet";
 import { BACK_JS, BRIDGE_JS } from "./inject";
-import { decideNavigation, shareUrlOnSite, SITE_URL } from "./navigationPolicy";
+import { decideNavigation, pageFromUrl, shareUrlOnSite, SITE_URL, type SitePage } from "./navigationPolicy";
 import { OfflineScreen } from "./OfflineScreen";
 import { colors } from "./theme";
 
@@ -39,6 +39,11 @@ import { colors } from "./theme";
 // WebViewProps & undefined collapses to never under this TypeScript.
 const SiteView = WebView as unknown as ComponentType<WebViewProps & RefAttributes<WebView>>;
 const ORIGIN_WHITELIST = ["https://*", "http://*", "about:*"];
+const LEGAL: { page: Exclude<SitePage, "home" | "other">; path: string; label: string; name: string }[] = [
+  { page: "privacy", path: "/privacy", label: "Privacy", name: "Privacy policy" },
+  { page: "terms", path: "/terms", label: "Terms", name: "Terms and conditions" },
+  { page: "support", path: "/support", label: "Support", name: "Support" },
+];
 
 type SharePayload = { title?: string; text?: string; url?: string };
 
@@ -49,12 +54,19 @@ export function WebShell() {
   const skipLoadHaptic = useRef(true);
   const splashHidden = useRef(false);
   const lastShare = useRef(0);
+  const lastTap = useRef(0);
+  const loadFailed = useRef(false);
   const [offline, setOffline] = useState(false);
   const [webError, setWebError] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
+  const [startUrl, setStartUrl] = useState(SITE_URL);
+  const [navUrl, setNavUrl] = useState(SITE_URL);
+  const [canBack, setCanBack] = useState(false);
+  const [windowOpen, setWindowOpen] = useState(false);
   const [alertsOpen, setAlertsOpen] = useState(false);
   const [alertsOn, setAlertsOn] = useState(false);
   const [alertNote, setAlertNote] = useState("Off. Nothing is checked.");
+  const page = pageFromUrl(navUrl);
 
   const hideSplash = useCallback(() => {
     if (splashHidden.current) return;
@@ -63,6 +75,9 @@ export function WebShell() {
   }, []);
 
   const tap = useCallback(() => {
+    const now = Date.now();
+    if (now - lastTap.current < 280) return;
+    lastTap.current = now;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
   }, []);
 
@@ -105,7 +120,7 @@ export function WebShell() {
 
   const onMessage = useCallback(
     (event: WebViewMessageEvent) => {
-      let data: { type?: string; handled?: boolean; title?: string; text?: string; url?: string };
+      let data: { type?: string; handled?: boolean; open?: boolean; title?: string; text?: string; url?: string };
       try {
         data = JSON.parse(event.nativeEvent.data) as typeof data;
       } catch {
@@ -118,17 +133,56 @@ export function WebShell() {
       } else if (data.type === "refresh") {
         tap();
         webRef.current?.reload();
+      } else if (data.type === "window") {
+        setWindowOpen(data.open === true);
       } else if (data.type === "back") {
         if (data.handled) return;
         if (canGoBack.current) webRef.current?.goBack();
-        else BackHandler.exitApp();
+        else if (Platform.OS === "android") BackHandler.exitApp();
       }
     },
     [shareFromSite, tap],
   );
 
+  const openInApp = useCallback(
+    (path: string) => {
+      tap();
+      const url = SITE_URL + path;
+      setWebError(false);
+      if (webRef.current && !offline) {
+        webRef.current.injectJavaScript(`window.location.assign(${JSON.stringify(url)}); true;`);
+        return;
+      }
+      setStartUrl(url);
+      if (!offline) setReloadKey((value) => value + 1);
+    },
+    [offline, tap],
+  );
+
+  const onBack = useCallback(() => {
+    tap();
+    if (windowOpen && webRef.current) {
+      webRef.current.injectJavaScript(BACK_JS);
+      return;
+    }
+    if (canGoBack.current && webRef.current) {
+      webRef.current.goBack();
+      return;
+    }
+    setWebError(false);
+    if (webRef.current && !offline) {
+      webRef.current.injectJavaScript(`window.location.assign(${JSON.stringify(SITE_URL + "/")}); true;`);
+      return;
+    }
+    setStartUrl(SITE_URL);
+    if (!offline) setReloadKey((value) => value + 1);
+  }, [offline, tap, windowOpen]);
+
   const onNav = useCallback((nav: WebViewNavigation) => {
     canGoBack.current = nav.canGoBack;
+    setCanBack(nav.canGoBack);
+    setNavUrl(nav.url);
+    if (pageFromUrl(nav.url) !== "home") setWindowOpen(false);
   }, []);
 
   const retry = useCallback(() => {
@@ -195,7 +249,8 @@ export function WebShell() {
 
   const onHttpError = useCallback(
     (event: WebViewHttpErrorEvent) => {
-      if (event.nativeEvent.statusCode >= 500) {
+      if (event.nativeEvent.statusCode >= 400) {
+        loadFailed.current = true;
         setWebError(true);
         hideSplash();
       }
@@ -204,31 +259,76 @@ export function WebShell() {
   );
 
   const showOffline = offline || webError;
+  const showBack = windowOpen || canBack || (page !== "home" && page !== "other");
 
   return (
     <View style={styles.root}>
-      <View style={[styles.chrome, { paddingTop: insets.top + 6 }]}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Alerts"
-          onPress={() => {
-            tap();
-            setAlertsOpen(true);
-            setAlertNote(alertsOn ? "On. Checked when you open the app." : "Off. Nothing is checked.");
-          }}
-          style={styles.alerts}
-        >
-          <Text style={styles.alertsText}>Alerts</Text>
-        </Pressable>
+      <View
+        style={[
+          styles.chrome,
+          {
+            paddingTop: insets.top + 4,
+            paddingLeft: Math.max(insets.left, 12),
+            paddingRight: Math.max(insets.right, 12),
+          },
+        ]}
+      >
+        <View style={styles.topRow}>
+          {showBack ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={windowOpen ? "Back to the radar" : "Back"}
+              onPress={onBack}
+              style={styles.back}
+            >
+              <Text style={styles.backText}>Back</Text>
+            </Pressable>
+          ) : (
+            <Text style={styles.brand} accessibilityRole="header">
+              Movementizer
+            </Text>
+          )}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Alerts"
+            onPress={() => {
+              tap();
+              setAlertsOpen(true);
+              setAlertNote(alertsOn ? "On. Checked when you open the app." : "Off. Nothing is checked.");
+            }}
+            style={styles.alerts}
+          >
+            <Text style={styles.alertsText}>Alerts</Text>
+          </Pressable>
+        </View>
+        <View style={styles.legalRow}>
+          {LEGAL.map((item) => {
+            const selected = page === item.page;
+            return (
+              <Pressable
+                key={item.page}
+                accessibilityRole="button"
+                accessibilityLabel={item.name}
+                accessibilityState={{ selected }}
+                onPress={() => openInApp(item.path)}
+                style={[styles.legalBtn, selected && styles.legalBtnOn]}
+              >
+                <Text style={[styles.legalText, selected && styles.legalTextOn]} numberOfLines={1}>
+                  {item.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
       </View>
       <View style={styles.body}>
       {showOffline ? (
-        <OfflineScreen onRetry={retry} />
+        <OfflineScreen onRetry={retry} reason={offline ? "offline" : "error"} />
       ) : (
         <SiteView
           key={reloadKey}
           ref={webRef}
-          source={{ uri: SITE_URL }}
+          source={{ uri: startUrl }}
           style={styles.web}
           originWhitelist={ORIGIN_WHITELIST}
           onShouldStartLoadWithRequest={onShouldStart}
@@ -252,6 +352,7 @@ export function WebShell() {
             </View>
           )}
           onLoadStart={() => {
+            loadFailed.current = false;
             if (skipLoadHaptic.current) {
               skipLoadHaptic.current = false;
               return;
@@ -259,15 +360,22 @@ export function WebShell() {
             tap();
           }}
           onLoadEnd={() => {
-            setWebError(false);
             hideSplash();
+            if (loadFailed.current) return;
+            setWebError(false);
             void checkForStatusChanges();
           }}
-          onError={() => {
+          onError={(event) => {
+            const code = event.nativeEvent.code;
+            if (code === -999 || code === -3) return;
+            loadFailed.current = true;
             setWebError(true);
             hideSplash();
           }}
           onHttpError={onHttpError}
+          onContentProcessDidTerminate={() => {
+            webRef.current?.reload();
+          }}
         />
       )}
       </View>
@@ -296,9 +404,63 @@ const styles = StyleSheet.create({
   },
   chrome: {
     backgroundColor: colors.bg,
-    paddingBottom: 6,
-    paddingRight: 12,
-    alignItems: "flex-end",
+    paddingBottom: 8,
+    gap: 8,
+  },
+  topRow: {
+    minHeight: 44,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
+  },
+  brand: {
+    flex: 1,
+    color: colors.cream,
+    fontFamily: "Georgia",
+    fontSize: 22,
+  },
+  back: {
+    minHeight: 44,
+    minWidth: 64,
+    paddingHorizontal: 14,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: "rgba(245,239,228,0.28)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  backText: {
+    color: colors.cream,
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  legalRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  legalBtn: {
+    flex: 1,
+    minHeight: 44,
+    paddingHorizontal: 8,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: "rgba(245,239,228,0.22)",
+    backgroundColor: "rgba(255,255,255,0.04)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  legalBtnOn: {
+    borderColor: "rgba(72,224,192,0.75)",
+    backgroundColor: "rgba(72,224,192,0.12)",
+  },
+  legalText: {
+    color: colors.cream,
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  legalTextOn: {
+    color: colors.teal,
   },
   body: {
     flex: 1,

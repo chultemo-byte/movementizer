@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { diffStatuses, notificationBody, parseMovementStatuses } from "./movementStatus";
-import { decideNavigation, shareUrlOnSite } from "./navigationPolicy";
+import { decideNavigation, pageFromUrl, shareUrlOnSite } from "./navigationPolicy";
 
 const html = readFileSync(new URL("../../index.html", import.meta.url), "utf8");
 const snapshot = parseMovementStatuses(html);
@@ -32,6 +32,41 @@ if (!notificationBody(changed).includes("Still on")) {
 
 if (decideNavigation("https://movementizer.com/?w=nokings", true) !== "allow") {
   throw new Error("Site navigation should stay in the app");
+}
+for (const path of ["/privacy", "/terms", "/support"]) {
+  if (decideNavigation("https://movementizer.com" + path, true) !== "allow") {
+    throw new Error(path + " should open inside the app");
+  }
+  if (decideNavigation(path, true) !== "allow") {
+    throw new Error("Relative " + path + " should open inside the app");
+  }
+}
+if (decideNavigation("javascript:alert(1)", true) !== "ignore") {
+  throw new Error("Script URLs should not be opened");
+}
+if (decideNavigation("mailto:hridaya.8888@gmail.com", true) !== "external") {
+  throw new Error("Mail links should leave the web view");
+}
+
+if (pageFromUrl("https://movementizer.com/privacy/") !== "privacy") {
+  throw new Error("Privacy path should be recognized");
+}
+if (pageFromUrl("https://movementizer.com/terms") !== "terms") {
+  throw new Error("Terms path should be recognized");
+}
+if (pageFromUrl("https://www.movementizer.com/support") !== "support") {
+  throw new Error("Support path should be recognized");
+}
+if (pageFromUrl("https://movementizer.com/?w=nokings") !== "home") {
+  throw new Error("A movement window is still the radar");
+}
+
+const radarAt = html.indexOf('id="radar"');
+const privacyAt = html.indexOf('href="/privacy"');
+const termsAt = html.indexOf('href="/terms"');
+const supportAt = html.indexOf('href="/support"');
+if (privacyAt < 0 || termsAt < 0 || supportAt < 0 || privacyAt > radarAt) {
+  throw new Error("Privacy, Terms, and Support should be linked above the radar");
 }
 if (decideNavigation("https://www.youtube.com/watch?v=abc", true) !== "external") {
   throw new Error("External links should leave the app");

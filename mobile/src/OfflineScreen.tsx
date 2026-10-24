@@ -3,9 +3,11 @@ import { colors } from "./theme";
 
 type Props = {
   onRetry: () => void;
+  reason: "offline" | "error";
 };
 
-export function OfflineScreen({ onRetry }: Props) {
+export function OfflineScreen({ onRetry, reason }: Props) {
+  const offline = reason === "offline";
   return (
     <View style={styles.screen}>
       <View style={styles.radar} accessibilityElementsHidden>
@@ -13,8 +15,12 @@ export function OfflineScreen({ onRetry }: Props) {
         <View style={styles.ringInner} />
         <View style={styles.blip} />
       </View>
-      <Text style={styles.title}>You are offline</Text>
-      <Text style={styles.body}>The Earth radar needs a connection. Pull to refresh once you are back, or try again.</Text>
+      <Text style={styles.title}>{offline ? "You are offline" : "The radar did not load"}</Text>
+      <Text style={styles.body}>
+        {offline
+          ? "Movementizer needs a connection to open the Earth radar. Try again when you are back online."
+          : "The page did not load. Check the connection and try again."}
+      </Text>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Retry"
