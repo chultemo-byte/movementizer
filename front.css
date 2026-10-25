@@ -354,3 +354,17 @@ body a.status {
 }
 .legal-nav a:hover, .legal-nav a:focus-visible { border-color: var(--sig-still); }
 .legal-nav a[aria-current="page"] { border-color: rgba(72,224,192,.75); color: var(--radar); }
+footer .legal-nav { gap: 0 1.15rem; margin: .1rem 0 .2rem; }
+footer .legal-nav a {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--dim);
+  font-size: .92rem;
+  text-decoration: underline;
+  text-underline-offset: .18em;
+}
+footer .legal-nav a:hover, footer .legal-nav a:focus-visible { border-color: transparent; color: var(--text); }
+footer .legal-nav a[aria-current="page"] { border-color: transparent; color: var(--radar); text-decoration-thickness: 2px; }
