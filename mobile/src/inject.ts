@@ -6,6 +6,7 @@ export const BRIDGE_JS = `
 (function () {
   if (window.__MOVEMENTIZER_BRIDGE__) return;
   window.__MOVEMENTIZER_BRIDGE__ = true;
+  window.__MVZ_CAN_BACK__ = false;
 
   function post(payload) {
     if (!window.ReactNativeWebView || typeof window.ReactNativeWebView.postMessage !== "function") return;
@@ -67,6 +68,63 @@ export const BRIDGE_JS = `
       if (!hit || hit.id === "share") return;
       post({ type: "haptic" });
     }, true);
+
+    // iOS edge swipe. Only the left 28px can start it, and only while the shell
+    // has set __MVZ_CAN_BACK__. A vertical move is left to the page. The shell
+    // decides whether the swipe was long enough. Keep the 28 / 10 / 1.2
+    // numbers in sync with edgeSwipe.ts.
+    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      var edge = null;
+      document.addEventListener("touchstart", function (event) {
+        edge = null;
+        if (window.__MVZ_CAN_BACK__ !== true) return;
+        if (!event.touches || event.touches.length !== 1) return;
+        var t = event.touches[0];
+        if (!t || t.clientX > 28) return;
+        edge = { x: t.clientX, y: t.clientY, t: event.timeStamp, locked: null };
+      }, { capture: true, passive: true });
+      document.addEventListener("touchmove", function (event) {
+        if (!edge || !event.touches || !event.touches[0]) return;
+        var t = event.touches[0];
+        var dx = t.clientX - edge.x;
+        var dy = t.clientY - edge.y;
+        if (edge.locked == null) {
+          if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+          edge.locked = dx > 10 && dx > Math.abs(dy) * 1.2 ? "back" : "page";
+        }
+        if (edge.locked !== "back") return;
+        if (event.cancelable) event.preventDefault();
+        post({ type: "edge-move", dx: dx });
+      }, { capture: true, passive: false });
+      function endEdge(event) {
+        if (!edge) return;
+        var locked = edge.locked;
+        var start = edge;
+        edge = null;
+        if (locked !== "back") {
+          post({ type: "edge-cancel" });
+          return;
+        }
+        if (event.cancelable) event.preventDefault();
+        var t = event.changedTouches && event.changedTouches[0];
+        if (!t) {
+          post({ type: "edge-cancel" });
+          return;
+        }
+        post({
+          type: "edge-end",
+          dx: t.clientX - start.x,
+          dy: t.clientY - start.y,
+          dt: Math.max(1, event.timeStamp - start.t)
+        });
+      }
+      document.addEventListener("touchend", endEdge, { capture: true, passive: false });
+      document.addEventListener("touchcancel", function () {
+        if (!edge) return;
+        edge = null;
+        post({ type: "edge-cancel" });
+      }, { capture: true, passive: true });
+    }
 
     if (/Android/i.test(navigator.userAgent)) {
       var startY = null;
