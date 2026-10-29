@@ -27,7 +27,7 @@ Movementizer is the Earth radar for movements. Each movement has one window. The
 
 Open a window for the place, the claim, photos, and video. Press play when you want the video. Share sends that window through the iPhone share sheet.
 
-The app keeps the radar on movementizer.com. Privacy, Terms, and Support are on the opening screen and in the bar under the title. Back returns to the previous page. A swipe from the left edge does the same as Back. A link that leaves the site opens in Safari.
+The app keeps the radar on movementizer.com. The first time you open it, you agree to the terms. Privacy, Terms, and Support are in the bar under the title. Back returns to the previous page. A swipe from the left edge does the same as Back. A link that leaves the site opens in Safari.
 
 Offline, the app shows its own screen and a Retry button. Pull down on the radar to refresh. A light tap is felt when you open a window, share, or refresh.
 
@@ -79,7 +79,7 @@ Data the publisher does not receive from the app:
 - No purchases.
 - No health or financial data.
 - The website does not set cookies and does not use localStorage or sessionStorage.
-- The Alerts switch stores two things on the phone only (AsyncStorage): whether alerts are on, and the last public status of each window. That list is not uploaded. It does not need its own nutrition-label row if it never leaves the device.
+- The Alerts switch stores two things on the phone only (AsyncStorage): whether alerts are on, and the last public status of each window. Agreeing to the terms stores the terms date on the phone only. None of that is uploaded. It does not need its own nutrition-label row if it never leaves the device.
 
 Data that does leave the device, because the app loads the public site:
 
@@ -110,7 +110,7 @@ Paste this into App Review Information. Sign-in is not required. There is no dem
 ```
 No account and no sign-in.
 
-The app is a native shell around https://movementizer.com. Pages on movementizer.com and www.movementizer.com stay in the app. Privacy, Terms, and Support are linked at the top of the radar and again on the app bar under the title. Back on that bar returns to the previous page. A swipe from the left edge does the same as Back. Each of those pages also has Back to the radar. News links, photo credits, and YouTube watch links open in Safari. A YouTube embed plays inside the window only after the reader presses play.
+The app is a native shell around https://movementizer.com. Pages on movementizer.com and www.movementizer.com stay in the app. The first launch asks you to agree to the terms. Terms and Privacy open in the app, and Back returns to that screen. The agreement is saved on the phone. It is asked again only if the terms change. Privacy, Terms, and Support are in the app bar under the title. They are not repeated on the radar. Back on that bar returns to the previous page. A swipe from the left edge does the same as Back. Each of those pages also has Back to the radar. News links, photo credits, and YouTube watch links open in Safari. A YouTube embed plays inside the window only after the reader presses play.
 
 Airplane mode: the app shows a native offline screen with Retry. Pull down on the radar to refresh.
 
