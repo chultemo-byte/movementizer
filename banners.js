@@ -7,6 +7,7 @@ window.MOVEMENT_BANNERS = {
 "georgia":{"id":"5Bjb62wwHNI","title":"Georgia Protests LIVE: Fireworks, Water Cannons Used as Pro-EU Protesters, Police Clash in Tbilisi","channel":"Firstpost","views":272410,"checked":"6 Oct 2026","poster":"maxresdefault"},
 "france-schools":{"id":"-sza_kk6TwM","title":"Fervor and fire at French school protests","channel":"CBS Mornings","views":759092,"checked":"6 Oct 2026","poster":"maxresdefault"},
 "venezuela-machado":{"id":"D99uL1Y5T0o","title":"IMPRESIONANTE MOVILIZACIÓN: Así avanza la GRAN RODADA en Venezuela por el regreso de María Corina","channel":"NTN24","views":464913,"checked":"6 Oct 2026","poster":"maxresdefault"},
+"italy-carovita":{"id":"c7c7ecEdtuc","title":"Sciopero a Milano, 30mila manifestanti bloccano la Tangenziale Est","channel":"Il Messaggero","views":943,"checked":"30 Oct 2026","poster":"maxresdefault"},
 "serbia":{"id":"6gtDWCx6J4Q","title":"LIVE: Serbians protest in Belgrade amid corruption scandal","channel":"Times Radio","views":550057,"checked":"6 Oct 2026","poster":"maxresdefault"},
 "kenya-finance":{"id":"qz0f1yyf_eA","title":"Blood Parliament - BBC Africa Eye Documentary","channel":"BBC News Africa","views":8700374,"checked":"6 Oct 2026","poster":"maxresdefault"},
 "bangladesh":{"id":"EtxDY3lvhO0","title":"কোটা আন্দোলনকারীদের ওপর হামলা | Quota Andolon | Dhaka University | BSL | News | Prothom Alo","channel":"Prothom Alo","views":12638424,"checked":"6 Oct 2026","poster":"maxresdefault"},
