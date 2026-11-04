@@ -1,7 +1,9 @@
-// Runs inside the site. Hides leftover record/upload controls, opens the
-// native share sheet from the Share button, and asks for a light haptic
-// when a movement is opened. Android pull-down at the top of the page
-// asks the shell to reload. iOS uses the WebView pull-to-refresh control.
+// Runs inside the site. Hides leftover record/upload controls and the
+// website's Privacy / Terms / Support links, because the app bar is the
+// one place for those. Opens the native share sheet from the Share button,
+// and asks for a light haptic when a movement is opened. Android pull-down
+// at the top of the page asks the shell to reload. iOS uses the WebView
+// pull-to-refresh control.
 export const BRIDGE_JS = `
 (function () {
   if (window.__MOVEMENTIZER_BRIDGE__) return;
@@ -18,7 +20,7 @@ export const BRIDGE_JS = `
     if (!style) {
       style = document.createElement("style");
       style.id = "mvz-app-hide";
-      style.textContent = "#record,#upload{display:none !important}";
+      style.textContent = "#record,#upload,.legal-nav{display:none !important}";
       (document.head || document.documentElement).appendChild(style);
     }
 

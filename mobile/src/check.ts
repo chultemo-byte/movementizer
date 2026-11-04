@@ -3,6 +3,7 @@ import { chooseBackAction, shouldCommitEdgeBack } from "./edgeSwipe";
 import { BRIDGE_JS } from "./inject";
 import { diffStatuses, notificationBody, parseMovementStatuses } from "./movementStatus";
 import { decideNavigation, pageFromUrl, shareUrlOnSite } from "./navigationPolicy";
+import { TERMS_EFFECTIVE, TERMS_VERSION, termsAreCurrent } from "./termsGate";
 
 const html = readFileSync(new URL("../../index.html", import.meta.url), "utf8");
 const snapshot = parseMovementStatuses(html);
@@ -64,11 +65,28 @@ if (pageFromUrl("https://movementizer.com/?w=nokings") !== "home") {
 }
 
 const radarAt = html.indexOf('id="radar"');
-const privacyAt = html.indexOf('href="/privacy"');
-const termsAt = html.indexOf('href="/terms"');
-const supportAt = html.indexOf('href="/support"');
-if (privacyAt < 0 || termsAt < 0 || supportAt < 0 || privacyAt > radarAt) {
-  throw new Error("Privacy, Terms, and Support should be linked above the radar");
+const footerAt = html.indexOf("<footer>");
+if (footerAt < 0 || footerAt < radarAt) {
+  throw new Error("The footer should follow the radar");
+}
+const beforeFooter = html.slice(0, footerAt);
+for (const path of ["/privacy", "/terms", "/support"]) {
+  if (beforeFooter.includes('href="' + path + '"')) {
+    throw new Error(path + " should not be linked above the footer");
+  }
+  if (!html.slice(footerAt).includes('href="' + path + '"')) {
+    throw new Error(path + " should be linked once, in the footer");
+  }
+}
+const termsPage = readFileSync(new URL("../../terms/index.html", import.meta.url), "utf8");
+if (!termsPage.includes("Effective " + TERMS_EFFECTIVE)) {
+  throw new Error("The stored terms version should match the date on the terms page");
+}
+if (!termsAreCurrent(TERMS_VERSION) || termsAreCurrent(null) || termsAreCurrent("2026-10-23")) {
+  throw new Error("Only the current terms version should count as accepted");
+}
+if (!BRIDGE_JS.includes(".legal-nav{display:none")) {
+  throw new Error("The app should hide the website legal links so the bar is the only place");
 }
 if (decideNavigation("https://www.youtube.com/watch?v=abc", true) !== "external") {
   throw new Error("External links should leave the app");
