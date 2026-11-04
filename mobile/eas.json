@@ -1,18 +1,19 @@
 {
   "cli": {
     "version": ">= 16.0.0",
-    "appVersionSource": "remote"
+    "appVersionSource": "local"
   },
   "build": {
     "production": {
       "distribution": "store",
-      "autoIncrement": true
+      "autoIncrement": false
     }
   },
   "submit": {
     "production": {
       "ios": {
-        "ascAppId": "TODO"
+        "appleTeamId": "SMUWVBRUJ5",
+        "ascAppId": "6826421935"
       }
     }
   }

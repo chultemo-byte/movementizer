@@ -11,7 +11,8 @@
     "scheme": "movementizer",
     "ios": {
       "bundleIdentifier": "com.khardhridayainc.movementizer",
-      "buildNumber": "1",
+      "buildNumber": "3",
+      "appleTeamId": "SMUWVBRUJ5",
       "supportsTablet": true,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -30,6 +31,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "80ff33dc-e239-4ab1-889f-96c6f99b6e41"
+      }
     },
     "plugins": [
       [
