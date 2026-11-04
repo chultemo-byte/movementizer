@@ -35,6 +35,7 @@ import { chooseBackAction, shouldCommitEdgeBack } from "./edgeSwipe";
 import { BACK_JS, BRIDGE_JS } from "./inject";
 import { decideNavigation, pageFromUrl, shareUrlOnSite, SITE_URL, type SitePage } from "./navigationPolicy";
 import { OfflineScreen } from "./OfflineScreen";
+import { bandForTab, bandScript, TABS, type Tab } from "./tabs";
 import { colors } from "./theme";
 
 // SDK 58's WebView class defaults its type parameter to undefined, and
@@ -67,11 +68,12 @@ export function WebShell() {
   const [navUrl, setNavUrl] = useState(SITE_URL);
   const [canBack, setCanBack] = useState(false);
   const [windowOpen, setWindowOpen] = useState(false);
-  const [alertsOpen, setAlertsOpen] = useState(false);
+  const [tab, setTab] = useState<Tab["id"]>("radar");
+  const tabRef = useRef<Tab["id"]>("radar");
   const [alertsOn, setAlertsOn] = useState(false);
   const [alertNote, setAlertNote] = useState("Off. Nothing is checked.");
   const page = pageFromUrl(navUrl);
-  const showBack = windowOpen || canBack || (page !== "home" && page !== "other");
+  const showBack = tab !== "alerts" && (windowOpen || canBack || (page !== "home" && page !== "other"));
 
   const hideSplash = useCallback(() => {
     if (splashHidden.current) return;
@@ -207,12 +209,47 @@ export function WebShell() {
     [edgeDrag, performBack, shareFromSite, tap],
   );
 
+  const showBand = useCallback(
+    (id: Tab["id"]) => {
+      const script = bandScript(bandForTab(id));
+      if (webRef.current && !offline && page === "home" && !windowOpen) {
+        webRef.current.injectJavaScript(script);
+        return;
+      }
+      if (webRef.current && !offline) {
+        webRef.current.injectJavaScript(`window.location.replace(${JSON.stringify(SITE_URL + "/")}); true;`);
+        return;
+      }
+      setStartUrl(SITE_URL + "/");
+      if (!offline) setReloadKey((value) => value + 1);
+    },
+    [offline, page, windowOpen],
+  );
+
+  const selectTab = useCallback(
+    (id: Tab["id"]) => {
+      const showingThis = id === tabRef.current && (id === "alerts" || (page === "home" && !windowOpen));
+      if (showingThis) return;
+      Haptics.selectionAsync().catch(() => {});
+      tabRef.current = id;
+      setTab(id);
+      if (id === "alerts") return;
+      showBand(id);
+    },
+    [page, showBand, windowOpen],
+  );
+
   const openInApp = useCallback(
     (path: string) => {
       tap();
       const url = SITE_URL + path;
       setWebError(false);
-      if (webRef.current && !offline) {
+      const fromAlerts = tabRef.current === "alerts";
+      if (fromAlerts) {
+        tabRef.current = "radar";
+        setTab("radar");
+      }
+      if (webRef.current && !offline && !fromAlerts) {
         webRef.current.injectJavaScript(`window.location.assign(${JSON.stringify(url)}); true;`);
         return;
       }
@@ -280,15 +317,15 @@ export function WebShell() {
   useEffect(() => {
     if (Platform.OS !== "android") return;
     const sub = BackHandler.addEventListener("hardwareBackPress", () => {
-      if (alertsOpen) {
-        setAlertsOpen(false);
+      if (tabRef.current === "alerts") {
+        selectTab("radar");
         return true;
       }
       if (offline || webError) return false;
       return performBack();
     });
     return () => sub.remove();
-  }, [alertsOpen, offline, performBack, webError]);
+  }, [offline, performBack, selectTab, webError]);
 
   useEffect(() => {
     showBackRef.current = showBack;
@@ -345,22 +382,10 @@ export function WebShell() {
               Movementizer
             </Text>
           )}
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Alerts"
-            onPress={() => {
-              tap();
-              setAlertsOpen(true);
-              setAlertNote(alertsOn ? "On. Checked when you open the app." : "Off. Nothing is checked.");
-            }}
-            style={styles.alerts}
-          >
-            <Text style={styles.alertsText}>Alerts</Text>
-          </Pressable>
         </View>
         <View style={styles.legalRow}>
           {LEGAL.map((item) => {
-            const selected = page === item.page;
+            const selected = tab !== "alerts" && page === item.page;
             return (
               <Pressable
                 key={item.page}
@@ -379,7 +404,9 @@ export function WebShell() {
         </View>
       </View>
       <View style={styles.body}>
-      {showOffline ? (
+      {tab === "alerts" ? (
+        <AlertsSheet enabled={alertsOn} note={alertNote} onChange={onAlertsChange} />
+      ) : showOffline ? (
         <OfflineScreen onRetry={retry} reason={offline ? "offline" : "error"} />
       ) : (
         <SiteView
@@ -422,6 +449,7 @@ export function WebShell() {
           onLoadEnd={() => {
             hideSplash();
             syncCanBack();
+            webRef.current?.injectJavaScript(bandScript(bandForTab(tabRef.current)));
             if (loadFailed.current) return;
             setWebError(false);
             void checkForStatusChanges();
@@ -439,7 +467,7 @@ export function WebShell() {
           }}
         />
       )}
-      {Platform.OS === "ios" ? (
+      {tab !== "alerts" && Platform.OS === "ios" ? (
         <Animated.View
           pointerEvents="none"
           accessible={false}
@@ -449,14 +477,41 @@ export function WebShell() {
         </Animated.View>
       ) : null}
       </View>
-      <View style={{ height: insets.bottom }} />
-      <AlertsSheet
-        visible={alertsOpen}
-        enabled={alertsOn}
-        note={alertNote}
-        onClose={() => setAlertsOpen(false)}
-        onChange={onAlertsChange}
-      />
+      <View
+        accessibilityRole="tablist"
+        style={[
+          styles.tabs,
+          {
+            paddingBottom: Math.max(insets.bottom, 8),
+            paddingLeft: Math.max(insets.left, 4),
+            paddingRight: Math.max(insets.right, 4),
+          },
+        ]}
+      >
+        {TABS.map((item) => {
+          const selected = tab === item.id;
+          return (
+            <Pressable
+              key={item.id}
+              accessibilityRole="tab"
+              accessibilityLabel={item.label}
+              accessibilityState={{ selected }}
+              onPress={() => selectTab(item.id)}
+              style={styles.tab}
+            >
+              <View style={[styles.tabMark, selected && styles.tabMarkOn]} />
+              <Text
+                style={[styles.tabText, selected && styles.tabTextOn]}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.8}
+              >
+                {item.label}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
     </View>
   );
 }
@@ -569,19 +624,38 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  alerts: {
-    minHeight: 44,
-    paddingHorizontal: 14,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: "rgba(72,224,192,0.45)",
-    backgroundColor: "rgba(10,14,22,0.92)",
+  tabs: {
+    flexDirection: "row",
+    alignItems: "stretch",
+    backgroundColor: colors.bg,
+    borderTopWidth: 1,
+    borderTopColor: colors.line,
+    paddingTop: 4,
+  },
+  tab: {
+    flex: 1,
+    minHeight: 48,
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: 2,
+    gap: 4,
   },
-  alertsText: {
-    color: colors.teal,
-    fontSize: 14,
+  tabMark: {
+    width: 18,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: "transparent",
+  },
+  tabMarkOn: {
+    backgroundColor: colors.teal,
+  },
+  tabText: {
+    color: colors.dim,
+    fontSize: 11,
     fontWeight: "600",
+    textAlign: "center",
+  },
+  tabTextOn: {
+    color: colors.teal,
   },
 });

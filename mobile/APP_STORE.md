@@ -27,11 +27,11 @@ Movementizer is the Earth radar for movements. Each movement has one window. The
 
 Open a window for the place, the claim, photos, and video. Press play when you want the video. Share sends that window through the iPhone share sheet.
 
-The app keeps the radar on movementizer.com. The first time you open it, you agree to the terms. Privacy, Terms, and Support are in the bar under the title. Back returns to the previous page. A swipe from the left edge does the same as Back. A link that leaves the site opens in Safari.
+The app keeps the radar on movementizer.com. The first time you open it, a welcome screen asks you to agree. There is no account, no sign-up, and no purchase. After you agree, the radar is the first screen. Privacy, Terms, and Support are in the bar under the title, and the page does not repeat them. A tab bar at the bottom opens Radar, Live, Still on, Fulfilled, and Alerts. Back returns to the previous page. A swipe from the left edge does the same as Back. A link that leaves the site opens in Safari.
 
-Offline, the app shows its own screen and a Retry button. Pull down on the radar to refresh. A light tap is felt when you open a window, share, or refresh.
+Offline, the app shows its own screen and a Retry button. Pull down on the radar to refresh. A light tap is felt when you open a window, share, refresh, or change tabs.
 
-Alerts are off until you turn them on. The switch is at the top of the app. If you turn it on, this phone remembers the public Live, Still on, and Fulfilled labels and checks them again the next time you open the app. A change can post a notification on this device. Nothing is checked while the app is closed, and the list is not sent to a server.
+Alerts are off until you turn them on. The switch is on the Alerts tab. If you turn it on, this phone remembers the public Live, Still on, and Fulfilled labels and checks them again the next time you open the app. A change can post a notification on this device. Nothing is checked while the app is closed, and the list is not sent to a server.
 
 ## Keywords
 
@@ -110,13 +110,13 @@ Paste this into App Review Information. Sign-in is not required. There is no dem
 ```
 No account and no sign-in.
 
-The app is a native shell around https://movementizer.com. Pages on movementizer.com and www.movementizer.com stay in the app. The first launch asks you to agree to the terms. Terms and Privacy open in the app, and Back returns to that screen. The agreement is saved on the phone. It is asked again only if the terms change. Privacy, Terms, and Support are in the app bar under the title. They are not repeated on the radar. Back on that bar returns to the previous page. A swipe from the left edge does the same as Back. Each of those pages also has Back to the radar. News links, photo credits, and YouTube watch links open in Safari. A YouTube embed plays inside the window only after the reader presses play.
+The app is a native shell around https://movementizer.com. Pages on movementizer.com and www.movementizer.com stay in the app. The first launch is a welcome screen with Terms, Privacy, and I agree. Terms and Privacy open in the app, and Back or a left-edge swipe returns to that screen. The agreement is saved on the phone. It is asked again only if the terms change. After I agree, the radar opens. There is no account, no sign-up, and no purchase. Privacy, Terms, and Support are in the app bar under the title. They are not repeated on the page. A tab bar at the bottom opens Radar, Live, Still on, Fulfilled, and Alerts. Live can be empty when nothing is in the street. Back on the bar returns to the previous page. A swipe from the left edge does the same as Back. Each legal page also has Back to the radar. News links, photo credits, and YouTube watch links open in Safari. A YouTube embed plays inside the window only after the reader presses play.
 
-Airplane mode: the app shows a native offline screen with Retry. Pull down on the radar to refresh.
+Airplane mode: the app shows a native offline screen with Retry. Pull down on the radar to refresh. The Alerts tab still opens.
 
 Open any movement and tap Share. That opens the iOS share sheet. The app does not keep a record of the share.
 
-Alerts is the button at the top. It is off by default. Turning it on asks for notification permission and saves the current public Live / Still on / Fulfilled labels on the device. The next time the app is opened, a local notification can appear if one of those labels changed. Nothing is checked while the app is closed. There is no push server.
+Alerts is the last tab. It is off by default. Turning it on asks for notification permission and saves the current public Live / Still on / Fulfilled labels on the device. The next time the app is opened, a local notification can appear if one of those labels changed. Nothing is checked while the app is closed. There is no push server.
 
 Record and Upload are not in this build. Nothing is sent to the Internet Archive or to Filecoin.
 
@@ -131,15 +131,15 @@ From the `mobile/` directory, after the human steps below:
 npx eas-cli@latest build -p ios --profile production --auto-submit
 ```
 
-`eas.json` uses the production profile (`distribution: store`, `autoIncrement: true`, `appVersionSource: remote`). The iOS build number in git stays `1`. EAS stores the next build number. `submit.production.ios.ascAppId` is the placeholder `TODO` until the App Store Connect app exists.
+`eas.json` uses the production profile (`distribution: store`). `cli.appVersionSource` is `local` and `autoIncrement` is false, so the binary uses `ios.buildNumber` `3` from `app.json` and EAS does not bump it. With `remote`, that field is ignored, which is why this build does not use the remote counter. `ios.appleTeamId` and `submit.production.ios.appleTeamId` are `SMUWVBRUJ5` (KHARD HRIDAYA Inc., the organization team). `submit.production.ios.ascAppId` is `6826421935`. The EAS project id is `80ff33dc-e239-4ab1-889f-96c6f99b6e41` under the Expo owner `khardhridaya`.
 
 ## Steps a person has to do
 
-1. Sign in to Expo as the owner `khardhridaya` (`npx eas-cli@latest login` from `mobile/`). Run `npx eas-cli@latest init` there and link this app. Do not invent a project id. The owner in `app.json` is already `khardhridaya`.
-2. Confirm an Apple Developer Program membership that can create the bundle id `com.khardhridayainc.movementizer`.
-3. In App Store Connect, create the app record with that bundle id. Copy the numeric Apple ID (App Information, Apple ID). It is not the bundle id.
-4. Replace `TODO` in `mobile/eas.json` (`submit.production.ios.ascAppId`) with that number.
+1. Sign in to Expo as the owner `khardhridaya` (`npx eas-cli@latest login` from `mobile/`, or set `EXPO_TOKEN` for that account). The project id is already in `app.json`. Do not run `eas init` again and do not invent a project id.
+2. The Apple Developer membership is the organization KHARD HRIDAYA Inc., Team ID `SMUWVBRUJ5`. The bundle id is `com.khardhridayainc.movementizer`. Credentials from the old individual team will not sign this build.
+3. The App Store Connect app already exists. Its Apple ID is `6826421935`. Build 2 is already uploaded. This build is number 3. Do not let EAS auto-increment it.
+4. `ascAppId` and `appleTeamId` are already set in `mobile/eas.json`. Do not put an API key or a token in the repo.
 5. Paste the listing, keywords, age-rating answers, privacy answers, and review notes from this file. Set the support, privacy, and marketing URLs in the table above.
 6. Add screenshots. This repo was prepared on a machine with no iOS Simulator, so the screenshots are not included. App Store Connect will ask for the sizes. Plan on the 6.9-inch iPhone set (1320 x 2868) or the 6.7-inch set (1290 x 2796), plus a 13-inch iPad set (2064 x 2752) because `supportsTablet` is true. Use the sizes Connect lists that day.
-7. From `mobile/`, run the build command above. Complete the Apple credential prompts (distribution certificate, provisioning profile, and an App Store Connect API key or app-specific password). `autoIncrement` will bump the build number on EAS.
-8. The public website hides Record and Upload in this same change. The app also hides those controls if an older copy of the site is still deployed. Ship the website when you want the live pages to match.
+7. From `mobile/`, run the build command above. It needs an Expo login for `khardhridaya` and an App Store Connect API key (issuer id, key id, and the .p8 file) that can submit to team `SMUWVBRUJ5` and app `6826421935`. EAS will also need a distribution certificate and provisioning profile for that organization team.
+8. The public website keeps Privacy, Terms, and Support in the footer only. The app hides that footer row. Ship the website when you want the live pages to match.

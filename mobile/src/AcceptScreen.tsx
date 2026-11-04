@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useState, type ComponentType, type RefAttributes } from "react";
-import { ActivityIndicator, BackHandler, Linking, Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import { useCallback, useEffect, useRef, useState, type ComponentType, type RefAttributes } from "react";
+import { ActivityIndicator, Animated, BackHandler, Linking, Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { WebView, type WebViewProps } from "react-native-webview";
-import type { ShouldStartLoadRequest } from "react-native-webview/lib/WebViewTypes";
+import type { ShouldStartLoadRequest, WebViewMessageEvent } from "react-native-webview/lib/WebViewTypes";
 import * as Haptics from "expo-haptics";
 import * as SplashScreen from "expo-splash-screen";
+import { shouldCommitEdgeBack } from "./edgeSwipe";
+import { BRIDGE_JS } from "./inject";
 import { decideNavigation, pageFromUrl, SITE_URL } from "./navigationPolicy";
 import { TERMS_EFFECTIVE } from "./termsGate";
 import { acceptCurrentTerms } from "./termsStore";
@@ -20,6 +22,8 @@ type Props = {
 
 export function AcceptScreen({ onAccepted }: Props) {
   const insets = useSafeAreaInsets();
+  const readRef = useRef<WebView>(null);
+  const [edgeDrag] = useState(() => new Animated.Value(0));
   const [reading, setReading] = useState<Reading | null>(null);
   const [readError, setReadError] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -33,13 +37,14 @@ export function AcceptScreen({ onAccepted }: Props) {
     if (Platform.OS !== "android") return;
     const sub = BackHandler.addEventListener("hardwareBackPress", () => {
       if (reading) {
+        edgeDrag.setValue(0);
         setReading(null);
         return true;
       }
       return false;
     });
     return () => sub.remove();
-  }, [reading]);
+  }, [edgeDrag, reading]);
 
   const openPage = useCallback((page: Reading) => {
     setReadError(false);
@@ -60,6 +65,38 @@ export function AcceptScreen({ onAccepted }: Props) {
     }
     return true;
   }, []);
+
+  const leaveReading = useCallback(() => {
+    edgeDrag.setValue(0);
+    setReading(null);
+  }, [edgeDrag]);
+
+  const onReadMessage = useCallback(
+    (event: WebViewMessageEvent) => {
+      let data: { type?: string; dx?: number; dy?: number; dt?: number };
+      try {
+        data = JSON.parse(event.nativeEvent.data) as typeof data;
+      } catch {
+        return;
+      }
+      if (data.type === "edge-move") {
+        const dx = typeof data.dx === "number" ? data.dx : 0;
+        edgeDrag.setValue(Math.max(0, Math.min(dx, 140)));
+      } else if (data.type === "edge-cancel") {
+        edgeDrag.setValue(0);
+      } else if (data.type === "edge-end") {
+        edgeDrag.setValue(0);
+        const dx = typeof data.dx === "number" ? data.dx : 0;
+        const dy = typeof data.dy === "number" ? data.dy : 0;
+        const dt = typeof data.dt === "number" ? data.dt : 1;
+        if (shouldCommitEdgeBack(dx, dy, dt, true)) {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+          setReading(null);
+        }
+      }
+    },
+    [edgeDrag],
+  );
 
   const agree = useCallback(() => {
     if (saving) return;
@@ -90,7 +127,7 @@ export function AcceptScreen({ onAccepted }: Props) {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Back to the agreement"
-            onPress={() => setReading(null)}
+            onPress={leaveReading}
             style={styles.back}
           >
             <Text style={styles.backText}>Back</Text>
@@ -110,6 +147,7 @@ export function AcceptScreen({ onAccepted }: Props) {
             </View>
           ) : (
             <SiteView
+              ref={readRef}
               source={{ uri: SITE_URL + "/" + reading }}
               style={styles.web}
               originWhitelist={["https://*", "http://*", "about:*"]}
@@ -118,7 +156,12 @@ export function AcceptScreen({ onAccepted }: Props) {
                 Linking.openURL(event.nativeEvent.targetUrl).catch(() => {});
               }}
               setSupportMultipleWindows={false}
-              allowsBackForwardNavigationGestures
+              onMessage={onReadMessage}
+              injectedJavaScriptBeforeContentLoaded={BRIDGE_JS}
+              injectedJavaScriptBeforeContentLoadedForMainFrameOnly
+              // The terms page is loaded directly, so it has no web history.
+              // The same left-edge swipe as the radar returns to I agree.
+              allowsBackForwardNavigationGestures={false}
               allowsInlineMediaPlayback
               startInLoadingState
               renderLoading={() => (
@@ -126,6 +169,9 @@ export function AcceptScreen({ onAccepted }: Props) {
                   <ActivityIndicator color={colors.teal} />
                 </View>
               )}
+              onLoadEnd={() => {
+                readRef.current?.injectJavaScript("window.__MVZ_CAN_BACK__=true; true;");
+              }}
               onLoadStart={() => setReadError(false)}
               onError={(event) => {
                 const code = event.nativeEvent.code;
@@ -134,6 +180,33 @@ export function AcceptScreen({ onAccepted }: Props) {
               }}
             />
           )}
+          {Platform.OS === "ios" && !readError ? (
+            <Animated.View
+              pointerEvents="none"
+              accessible={false}
+              style={[
+                styles.cue,
+                {
+                  opacity: edgeDrag.interpolate({
+                    inputRange: [0, 16, 72],
+                    outputRange: [0, 0.35, 1],
+                    extrapolate: "clamp",
+                  }),
+                  transform: [
+                    {
+                      translateX: edgeDrag.interpolate({
+                        inputRange: [0, 120],
+                        outputRange: [-8, 36],
+                        extrapolate: "clamp",
+                      }),
+                    },
+                  ],
+                },
+              ]}
+            >
+              <View style={styles.chevron} />
+            </Animated.View>
+          ) : null}
         </View>
       ) : (
         <View style={[styles.welcome, { paddingBottom: Math.max(insets.bottom, 24) }]}>
@@ -219,6 +292,30 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 1,
+  },
+  cue: {
+    position: "absolute",
+    left: 0,
+    top: "42%",
+    width: 36,
+    height: 64,
+    borderTopRightRadius: 32,
+    borderBottomRightRadius: 32,
+    backgroundColor: "rgba(10,14,22,0.92)",
+    borderWidth: 1,
+    borderColor: "rgba(72,224,192,0.45)",
+    zIndex: 4,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  chevron: {
+    width: 14,
+    height: 14,
+    marginLeft: 6,
+    borderLeftWidth: 3,
+    borderBottomWidth: 3,
+    borderColor: colors.teal,
+    transform: [{ rotate: "45deg" }],
   },
   web: {
     flex: 1,

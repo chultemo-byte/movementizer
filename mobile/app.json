@@ -11,7 +11,8 @@
     "scheme": "movementizer",
     "ios": {
       "bundleIdentifier": "com.khardhridayainc.movementizer",
-      "buildNumber": "1",
+      "buildNumber": "3",
+      "appleTeamId": "SMUWVBRUJ5",
       "supportsTablet": true,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false

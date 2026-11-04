@@ -1,28 +1,37 @@
 // Runs inside the site. Hides leftover record/upload controls and the
 // website's Privacy / Terms / Support links, because the app bar is the
-// one place for those. Opens the native share sheet from the Share button,
-// and asks for a light haptic when a movement is opened. Android pull-down
-// at the top of the page asks the shell to reload. iOS uses the WebView
-// pull-to-refresh control.
+// one place for those. A tab can show one band (Live, Still on, Fulfilled)
+// by setting data-mvz-band on the page. Opens the native share sheet from
+// the Share button, and asks for a light haptic when a movement is opened.
+// Android pull-down at the top of the page asks the shell to reload. iOS
+// uses the WebView pull-to-refresh control.
 export const BRIDGE_JS = `
 (function () {
-  if (window.__MOVEMENTIZER_BRIDGE__) return;
-  window.__MOVEMENTIZER_BRIDGE__ = true;
-  window.__MVZ_CAN_BACK__ = false;
-
   function post(payload) {
     if (!window.ReactNativeWebView || typeof window.ReactNativeWebView.postMessage !== "function") return;
     window.ReactNativeWebView.postMessage(JSON.stringify(payload));
   }
+
+  window.__MVZ_SET_BAND__ = function (band) {
+    var root = document.documentElement;
+    if (!root) return;
+    if (band === "live" || band === "still" || band === "fulfilled") root.setAttribute("data-mvz-band", band);
+    else root.removeAttribute("data-mvz-band");
+    try { window.scrollTo(0, 0); } catch (err) {}
+  };
+
+  if (window.__MOVEMENTIZER_BRIDGE__) return;
+  window.__MOVEMENTIZER_BRIDGE__ = true;
+  window.__MVZ_CAN_BACK__ = false;
 
   function boot() {
     var style = document.getElementById("mvz-app-hide");
     if (!style) {
       style = document.createElement("style");
       style.id = "mvz-app-hide";
-      style.textContent = "#record,#upload,.legal-nav{display:none !important}";
       (document.head || document.documentElement).appendChild(style);
     }
+    style.textContent = "#record,#upload,.legal-nav{display:none !important}html[data-mvz-band] .mast,html[data-mvz-band] .ticker,html[data-mvz-band] .radar,html[data-mvz-band] footer{display:none !important}html[data-mvz-band='live'] section.band:not(#live),html[data-mvz-band='still'] section.band:not(#still),html[data-mvz-band='fulfilled'] section.band:not(#fulfilled){display:none !important}";
 
     function watchWindow() {
       var overlay = document.getElementById("window");
