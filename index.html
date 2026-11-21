@@ -1,1 +1,199 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Movementizer - Earth radar</title>
+  <meta name="description" content="The Earth radar for movements. One window each. Real video. Then memory." />
+  <meta name="theme-color" content="#0a0e16" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="Movementizer" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" href="/icons/icon-192.png" type="image/png" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="front.css" />
+</head>
+<body>
+  <a class="skip" href="#radar">Skip to movements</a>
+  <header class="mast">
+    <div class="row">
+      <p class="mark">Movementizer</p>
+      <div class="mast-tools">
+        <p class="status"><span class="dot" aria-hidden="true"></span> Radar live · checked every 4 hours</p>
+      </div>
+    </div>
+    <h1>Earth radar</h1>
+    <p class="law">The biggest movement radar on the planet: register every movement in its own window. Scale as last seen. We do not award victory. Only real video.</p>
+    <p class="howto">Tap a movement to open its window.</p>
+  </header>
+
+  <section class="radar" id="radar">
+    <div class="band-head">
+      <h2>Biggest pulses</h2>
+      <p>Ranked by last known scale. The square may be empty today. The ping stays. Bot checks the house and the street every 4 hours.</p>
+    </div>
+    <div class="scope">
+      <div class="dish" aria-hidden="true">
+        <span class="blip b1"></span>
+        <span class="blip b2"></span>
+        <span class="blip b3"></span>
+        <span class="blip b4"></span>
+      </div>
+      <ol class="pings">
+        <li><button type="button" class="card" data-slug="nokings" data-place="United States" data-claim="Last mass day 8 million. Alive between mass days."><span class="n">1</span><strong>No Kings</strong><span class="scale">~8 million peak</span></button></li>
+        <li><button type="button" class="card" data-slug="savesoil" data-place="Earth" data-claim="Living soil for the children."><span class="n">2</span><strong>Save Soil</strong><span class="scale">Earth</span></button></li>
+        <li><button type="button" class="card" data-slug="india-farmers" data-place="Delhi borders" data-claim="Three farm laws repealed."><span class="n">3</span><strong>India farmers</strong><span class="scale">Fulfilled · hundreds of thousands</span></button></li>
+        <li><button type="button" class="card" data-slug="france-schools" data-place="France · Paris / Marseille / Lyon / Nantes" data-claim="Schools, wages, cost of living. Last street Tue 17 Nov public-sector wage strike (Nation-Place d'Italie): Interior 146,000 in France, Paris 28,000 (préfecture) / CGT 500,000+, Paris 175,000 (Europe 1/AFP, BFMTV, La Provence); Lyon 7,000, Marseille 4,900 (préfectures); state public-service strikers 2.59%. Prior Sat 14 Nov Acte V: Interior 106,000, Paris 24,000 / organisers 200,000. Prior Tue 10 Nov education day: 49 lycées blocked (1.3%), 1.6% teachers on strike; Paris 6,000 / 10,000. Prior Sat 7 Nov Acte IV: Interior 146,000; Paris 46,000. Prior Thu 5 Nov: Interior 575,000 / CGT 1.6M. Peak school-only 6 Oct: 250k-266k. Not a camp."><span class="n">4</span><strong>France school movement</strong><span class="scale">146k on 17 Nov (Interior)</span></button></li>
+        <li><button type="button" class="card" data-slug="italy-carovita" data-place="Italy · Milan / Rome / Naples / Turin" data-claim="Cost of living, wages, school funding, no rearmament. Fri 30 Oct general strike (USB union) with students: 255,870 across 50+ cities by the Interior Ministry's public-security count (La Stampa, AGI), with Rome and Bologna over 50,000 each (dpa); Milan about 30,000 on the closed Tangenziale Est (ANSA), 35,000 (Corriere). USB claims 1 to 1.5 million. Follows weeks of school occupations. Not a camp. Next street not fixed."><span class="n">5</span><strong>Italy cost-of-living strike</strong><span class="scale">200k+ on 30 Oct</span></button></li>
+        <li><button type="button" class="card" data-slug="maricarmen" data-place="Madrid" data-claim="Housing. No more evictions. Last street Wed 11 Nov general strike (CCOO, UGT, Sindicato de Inquilinas; 'Todas somos Maricarmen'): Madrid march Atocha to Plaza de España in heavy rain, 120,000 (Government Delegation), 60,000 (Policía Nacional), 400,000-600,000 (Sindicato de Inquilinas) (EFE, Europa Press, elEconomista); police split the march near Plaza de España, ended without speeches. Barcelona 55,000 (Guardia Urbana). First general strike since 2012. Prior 3 Nov ~03:00: police evict and dismantle the Sol camp (~300-334 people, 2 detained for resistance; El País, Gacetín, EPE); cleaning removes tents/lonas. Prior: 31 Oct majority commissions announce progressive dissolution / mudanza to barrios for 11 Nov general strike; some remained (homeless). Last detailed camp: hundreds of tents (fewer). March 8 Oct: 20,000. Movement continues in barrios. Window stays."><span class="n">6</span><strong>Ni una Maricarmen más</strong><span class="scale">120k on 11 Nov (Delegación)</span></button></li>
+        <li><button type="button" class="card" data-slug="flamingo" data-place="Albania / Tirana" data-claim="Land, coast, flamingos, corruption."><span class="n">7</span><strong>Flamingo Revolution</strong><span class="scale">100k - 200k peak</span></button></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="band live" id="live">
+    <div class="band-head">
+      <h2>Live</h2>
+      <p>In the street now. About 10,000, or a verified camp from a mass day.</p>
+    </div>
+    <div class="grid">
+    </div>
+  </section>
+
+  <section class="band still" id="still">
+    <div class="band-head">
+      <h2>Still on</h2>
+      <p>Started. Not finished. The square may be empty today.</p>
+    </div>
+    <div class="grid">
+      <button type="button" class="card" data-slug="maricarmen" data-place="Madrid" data-claim="Housing. No more evictions. Last street Wed 11 Nov general strike (CCOO, UGT, Sindicato de Inquilinas; 'Todas somos Maricarmen'): Madrid march Atocha to Plaza de España in heavy rain, 120,000 (Government Delegation), 60,000 (Policía Nacional), 400,000-600,000 (Sindicato de Inquilinas) (EFE, Europa Press, elEconomista); police split the march near Plaza de España, ended without speeches. Barcelona 55,000 (Guardia Urbana). First general strike since 2012. Prior 3 Nov ~03:00: police evict and dismantle the Sol camp (~300-334 people, 2 detained for resistance; El País, Gacetín, EPE); cleaning removes tents/lonas. Prior: 31 Oct majority commissions announce progressive dissolution / mudanza to barrios for 11 Nov general strike; some remained (homeless). Last detailed camp: hundreds of tents (fewer). March 8 Oct: 20,000. Movement continues in barrios. Window stays.">
+        <span class="chip still">Still on</span>
+        <strong>Ni una Maricarmen más</strong>
+        <span class="place">Madrid · Puerta del Sol</span>
+        <span class="claim">Housing. No more evictions. Last street Wed 11 Nov general strike (CCOO, UGT, Sindicato de Inquilinas; 'Todas somos Maricarmen'): Madrid march Atocha to Plaza de España in heavy rain, 120,000 (Government Delegation), 60,000 (Policía Nacional), 400,000-600,000 (Sindicato de Inquilinas) (EFE, Europa Press, elEconomista); police split the march near Plaza de España, ended without speeches. Barcelona 55,000 (Guardia Urbana). First general strike since 2012. Prior 3 Nov ~03:00: police evict and dismantle the Sol camp (~300-334 people, 2 detained for resistance; El País, Gacetín, EPE); cleaning removes tents/lonas. Prior: 31 Oct majority commissions announce progressive dissolution / mudanza to barrios for 11 Nov general strike; some remained (homeless). Last detailed camp: hundreds of tents (fewer). March 8 Oct: 20,000. Movement continues in barrios. Window stays.</span>
+      </button>
+      <button type="button" class="card" data-slug="italy-carovita" data-place="Italy · Milan / Rome / Naples / Turin" data-claim="Cost of living, wages, school funding, no rearmament. Fri 30 Oct general strike (USB union) with students: 255,870 across 50+ cities by the Interior Ministry's public-security count (La Stampa, AGI), with Rome and Bologna over 50,000 each (dpa); Milan about 30,000 on the closed Tangenziale Est (ANSA), 35,000 (Corriere). USB claims 1 to 1.5 million. Follows weeks of school occupations. Not a camp. Next street not fixed.">
+        <span class="chip still">Still on</span>
+        <strong>Italy cost-of-living strike</strong>
+        <span class="place">Italy · Milan / Rome / Naples / Turin</span>
+        <span class="claim">Cost of living, wages, school funding, no rearmament. Fri 30 Oct general strike (USB union) with students: 255,870 across 50+ cities by the Interior Ministry's public-security count (La Stampa, AGI), with Rome and Bologna over 50,000 each (dpa); Milan about 30,000 on the closed Tangenziale Est (ANSA), 35,000 (Corriere). USB claims 1 to 1.5 million. Follows weeks of school occupations. Not a camp. Next street not fixed.</span>
+      </button>
+      <button type="button" class="card" data-slug="france-schools" data-place="France · Paris / Marseille / Lyon / Nantes" data-claim="Schools, wages, cost of living. Last street Tue 17 Nov public-sector wage strike (Nation-Place d'Italie): Interior 146,000 in France, Paris 28,000 (préfecture) / CGT 500,000+, Paris 175,000 (Europe 1/AFP, BFMTV, La Provence); Lyon 7,000, Marseille 4,900 (préfectures); state public-service strikers 2.59%. Prior Sat 14 Nov Acte V: Interior 106,000, Paris 24,000 / organisers 200,000. Prior Tue 10 Nov education day: 49 lycées blocked (1.3%), 1.6% teachers on strike; Paris 6,000 / 10,000. Prior Sat 7 Nov Acte IV: Interior 146,000; Paris 46,000. Prior Thu 5 Nov: Interior 575,000 / CGT 1.6M. Peak school-only 6 Oct: 250k-266k. Not a camp.">
+        <span class="chip still">Still on</span>
+        <strong>France school movement</strong>
+        <span class="place">France · Paris / Marseille / Lyon / Nantes</span>
+        <span class="claim">Last street Tue 17 Nov public-sector strike: 146k Interior (Paris 28k) / 500k+ CGT (Paris 175k). Prior 14 Nov 106k. Not a camp.</span>
+      </button>
+      <button type="button" class="card" data-slug="madrid-education" data-place="Madrid · Atocha / Puerta del Sol" data-claim="Public schools. Smaller classes, fewer teaching hours, better pay, more staff. Indefinite teachers' strike from 14 Oct. Last street Thu 5 Nov: 15,000 (Government Delegation) / 64,000 (organisers) (joint university + non-university march; russpain). Prior Wed 4 Nov: 6,000 / 10,000 (El País). Previous mass Thu 22 Oct: 20,000 (government delegation, EFE). Strike continues, no end date. Not a camp.">
+        <span class="chip still">Still on</span>
+        <strong>Madrid public-education strike</strong>
+        <span class="place">Madrid · Atocha / Puerta del Sol</span>
+        <span class="claim">Indefinite teachers' strike from 14 Oct. Last street Thu 5 Nov: 15,000 (Government Delegation) / 64,000 (organisers) (joint university + non-university march). Prior Wed 4 Nov: 6,000 / 10,000 (El País). Previous mass Thu 22 Oct: 20,000 (government delegation, EFE). Strike continues, no end date. Not a camp.</span>
+      </button>
+      <button type="button" class="card" data-slug="nokings" data-place="United States" data-claim="Last mass day 8 million. Next mass day ahead.">
+        <span class="chip still">Still on</span>
+        <strong>No Kings</strong>
+        <span class="place">United States</span>
+        <span class="claim">Last mass day 8 million. Alive between mass days.</span>
+      </button>
+      <button type="button" class="card" data-slug="savesoil" data-place="Earth" data-claim="Living soil for the children.">
+        <span class="chip still">Still on</span>
+        <strong>Save Soil</strong>
+        <span class="place">Earth</span>
+        <span class="claim">Living soil for the children.</span>
+      </button>
+      <button type="button" class="card" data-slug="flamingo" data-place="Albania / Tirana" data-claim="Land, coast, flamingos, corruption.">
+        <span class="chip still">Still on</span>
+        <strong>Flamingo Revolution</strong>
+        <span class="place">Albania / Tirana</span>
+        <span class="claim">Land, coast, flamingos, corruption.</span>
+      </button>
+      <button type="button" class="card" data-slug="georgia" data-place="Tbilisi" data-claim="Prisoners, laws, European course. 723 days as of Nov 20 (Caucasian Knot).">
+        <span class="chip still">Still on</span>
+        <strong>Georgia pro-Europe</strong>
+        <span class="place">Tbilisi</span>
+        <span class="claim">Prisoners, laws, European course. 723 days as of Nov 20 (Caucasian Knot).</span>
+      </button>
+      <button type="button" class="card" data-slug="venezuela-machado" data-place="Caracas / Valencia / Maracay / San Cristóbal / Maracaibo" data-claim="Return of María Corina Machado. Free elections. Last street Thu 22 Oct: first nationwide opposition protest in nearly two years, thousands in several cities (Reuters). Sep 27: hundreds in four cities.">
+        <span class="chip still">Still on</span>
+        <strong>Venezuela - Machado return</strong>
+        <span class="place">Caracas / Valencia / Maracay / San Cristóbal / Maracaibo</span>
+        <span class="claim">Return and free elections. Last street Thu 22 Oct: first nationwide protest in nearly two years, thousands (Reuters). Not a camp.</span>
+      </button>
+      <button type="button" class="card" data-slug="netherlands-redline" data-place="Amsterdam · Museumplein" data-claim="Dutch government: stop arms sales, tighten trade with Israel over Gaza. Last street Sun 8 Nov, 4th Red Line march, Museumplein: at least 200,000 by organisers incl. Amnesty NL (NL Times, Al Jazeera); tens of thousands (AP). No police count published. Oct 2025 edition ~250,000 (organisers). Not a camp. Next street not fixed.">
+        <span class="chip still">Still on</span>
+        <strong>Netherlands - Red Line</strong>
+        <span class="place">Amsterdam · Museumplein</span>
+        <span class="claim">Stop arms sales, tighten trade with Israel. Sun 8 Nov: at least 200,000 by organisers (NL Times); tens of thousands (AP). Not a camp.</span>
+      </button>
+      <button type="button" class="card" data-slug="czech-media" data-place="Prague · Letná Plain" data-claim="Public media: withdraw the bill that scraps licence fees for Czech Television and Czech Radio; dialogue, no more '4:36' style. Last street Sun 15 Nov, 'Letná proti 4:36' (Million Moments for Democracy), Letná Plain: 350,000-450,000 by organisers, about 400,000 per Mikuláš Minář; police published no count but released drone footage of the full plain; hundreds of thousands (Euronews/AP, Radio Prague International, ČTK); likely the largest since 1989. Ended peacefully about 16:45. PM Babiš says the government still wants to scrap the fees. Prior: 25 Oct Old Town Square, thousands. Next: 2 Dec nationwide warning and public debate at Švandovo divadlo. Not a camp.">
+        <span class="chip still">Still on</span>
+        <strong>Czechia - Hands off public media</strong>
+        <span class="place">Prague · Letná Plain</span>
+        <span class="claim">Withdraw the licence-fee bill. Sun 15 Nov Letná: 350k-450k by organisers; hundreds of thousands (Euronews/AP, Radio Prague). Police gave no count. Next 2 Dec. Not a camp.</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="band fulfilled" id="fulfilled">
+    <div class="band-head">
+      <h2>Fulfilled</h2>
+      <p>That claim met a change. The window stays. We do not award victory.</p>
+    </div>
+    <div class="grid">
+      <button type="button" class="card" data-slug="serbia" data-place="Novi Sad / Belgrade" data-claim="After the station collapse. 25 Oct election: Student List won 53.01% in the RIK count from all 8,392 polling stations after the 1 Nov repeat vote at 53 stations (Tanjug, RTK); majority of seats; Vučić conceded. Claim met. Window stays.">
+        <span class="chip done">Fulfilled</span>
+        <strong>Serbian student movement</strong>
+        <span class="place">Novi Sad / Belgrade</span>
+        <span class="claim">After the station collapse. 25 Oct election: Student List won 53.01% in the RIK count from all 8,392 polling stations after the 1 Nov repeat vote at 53 stations (Tanjug, RTK); majority of seats; Vučić conceded. Claim met. Window stays.</span>
+      </button>
+      <button type="button" class="card" data-slug="india-farmers" data-place="Delhi borders" data-claim="Three farm laws repealed.">
+        <span class="chip done">Fulfilled</span>
+        <strong>India farmers</strong>
+        <span class="place">Delhi borders</span>
+        <span class="claim">Three farm laws repealed.</span>
+      </button>
+      <button type="button" class="card" data-slug="kenya-finance" data-place="Nairobi" data-claim="2024 finance bill withdrawn.">
+        <span class="chip done">Fulfilled</span>
+        <strong>Kenya Finance Bill</strong>
+        <span class="place">Nairobi</span>
+        <span class="claim">2024 finance bill withdrawn.</span>
+      </button>
+      <button type="button" class="card" data-slug="bangladesh" data-place="Dhaka" data-claim="The uprising as a street stills.">
+        <span class="chip done">Fulfilled</span>
+        <strong>Bangladesh July Revolution</strong>
+        <span class="place">Dhaka</span>
+        <span class="claim">The uprising as a street stills.</span>
+      </button>
+      <button type="button" class="card" data-slug="nepal-genz" data-place="Kathmandu" data-claim="Ban off. Government out. New vote.">
+        <span class="chip done">Fulfilled</span>
+        <strong>Nepal Gen Z</strong>
+        <span class="place">Kathmandu</span>
+        <span class="claim">Ban off. Government out. New vote.</span>
+      </button>
+      <button type="button" class="card" data-slug="korea" data-place="Seoul" data-claim="Yoon removed. That campaign stills.">
+        <span class="chip done">Fulfilled</span>
+        <strong>South Korea anti-martial-law</strong>
+        <span class="place">Seoul</span>
+        <span class="claim">Yoon removed. That campaign stills.</span>
+      </button>
+      <button type="button" class="card" data-slug="bulgaria" data-place="Sofia" data-claim="Budget pulled. Government resigned.">
+        <span class="chip done">Fulfilled</span>
+        <strong>Bulgaria budget protests</strong>
+        <span class="place">Sofia</span>
+        <span class="claim">Budget pulled. Government resigned.</span>
+      </button>
+    </div>
+  </section>
+
+  <script src="app.js"></script>
+  <script src="banners.js"></script>
+  <script src="front.js"></script>
+  <script src="media.js"></script>
+</body>
+</html>
